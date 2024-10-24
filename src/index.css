@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "IRANSans";
+    src: url("../src/assets/fonts/IranSans/IRANSans.ttf"), format("woff2");
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "IRANSans_Black";
+    src: url("../src/assets/fonts/IranSans/IRANSans_Black.ttf"), format("woff2");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "IRANSans_Bold";
+    src: url("../src/assets/fonts/IranSans/IRANSans_Bold.ttf"), format("woff2");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "IRANSans_Light";
+    src: url("../src/assets/fonts/IranSans/IRANSans_Light.ttf"), format("woff2");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "IRANSans_Medium";
+    src: url("../src/assets/fonts/IranSans/IRANSans_Medium.ttf"),
+      format("woff2");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "IRANSans_UltraLight";
+    src: url("../src/assets/fonts/IranSans/IRANSans_UltraLight.ttf"),
+      format("woff2");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "IRANSansFaNum";
+    src: url("../src/assets/fonts/IranSans/IRANSansFaNum.ttf"), format("woff2");
+    font-display: swap;
+  }
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f5f3f3;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #9c9a9a;
+}
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
