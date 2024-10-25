@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Calendar } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
@@ -13,6 +13,8 @@ import { BsCheck2Circle } from "react-icons/bs";
 import uuid from "react-uuid";
 import Logo from "../assets/svg/LOGO.svg";
 import { numberToPersianWords, sp } from "../Functions/Fonctions";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const typeOfBillsDS = [
   { title: "پیش فاکتور", id: 1 },
@@ -74,6 +76,7 @@ const MakerPDF = () => {
   });
   const [products, setProducts] = useState([]);
 
+  const ref = useRef();
   const diabalBTN =
     !!product?.discription &&
     !!product?.number &&
@@ -85,6 +88,31 @@ const MakerPDF = () => {
     sumOff = i?.number * i?.off + sumOff;
     sumPay = i?.number * i?.pay + sumPay;
   });
+
+
+  const handelPDF=async()=>{
+    const input =ref.current
+
+    try {
+      const canvas = await html2canvas(input)
+      const imageData = canvas.toDataURL('image/png')
+      const PDF = new jsPDF({
+        orientation:"landscape",
+        unit:"px",
+        format:"a4"
+      })
+
+      const width =PDF.internal.pageSize.getWidth()
+      const heigth =( canvas.height*width)/canvas.width
+      
+
+      PDF.addImage(imageData,'PNG',0,0,width,heigth)
+      PDF.save(`${billNO}.pdf`)
+    } catch (error) {
+      console.log(error)
+      
+    }
+  }
 
   return (
     <>
@@ -303,7 +331,7 @@ const MakerPDF = () => {
                 توضیحات
               </div>
             </div>
-            <div className="border w-40 border-black px-4 pt-0.5 rounded-[10px]">
+            <div className="border w-40 border-black px-4 pt-0.5 rounded-[10px]" onClick={()=>handelPDF()}>
               خروجی PDF
             </div>
           </div>
@@ -508,7 +536,7 @@ const MakerPDF = () => {
         </div>
       </div>
       {/* ================================================================================================== */}
-      <div className="border-t my-5 max-w-7xl  min-w-[80rem] mx-auto  ">
+      <div className="border-t my-5 max-w-7xl  min-w-[80rem] mx-auto px-5  " ref={ref}>
         <div className="flex items-center justify-between  mt-5 relative">
           <div>
             <div>
@@ -728,7 +756,6 @@ const MakerPDF = () => {
         </div>
 
         {/* =========================================================================================================== */}
-        {console.log(numberToPersianWords(sumAll))}
         <div className="flex gap-2 items-center   mt-2">
           <div className="border rounded-2xl border-black w-1/2 h-32 flex justify-between px-5 py-2 text-gray-500">
             <p>مهر وامضای خریدار</p>
@@ -736,8 +763,8 @@ const MakerPDF = () => {
           </div>
           <div className="border flex rounded-2xl border-black w-1/2 h-32 text-gray-500">
             <div className="w-5/12 border-l-2 border-black h-full text-[12px] relative">
-              <div className=" text-justify mx-2">
-                توضیحات : <span className="text-black">{text}</span>
+              <div className=" text-justify mx-2 w-full">
+                توضیحات : <br /> <span className="text-black w-11/12 ">{text}</span>
               </div>
               <div className="w-full absolute bottom-0 py-1 pr-2 border-t-2 border-black">
                 کاربر سیستم : اشکان حسنوند {time?.day} <span> </span>
