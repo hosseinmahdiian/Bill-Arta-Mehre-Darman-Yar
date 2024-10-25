@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import { Calendar } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
-import { IoIosArrowDown, IoIosArrowUp, IoIosCalendar } from "react-icons/io";
+import {
+  IoIosArrowDown,
+  IoIosArrowUp,
+  IoIosCalendar,
+  IoMdClose,
+} from "react-icons/io";
 import { MdRadioButtonUnchecked } from "react-icons/md";
 import { BsCheck2Circle } from "react-icons/bs";
 import uuid from "react-uuid";
 import Logo from "../assets/svg/LOGO.svg";
+import { numberToPersianWords, sp } from "../Functions/Fonctions";
 
 const typeOfBillsDS = [
   { title: "پیش فاکتور", id: 1 },
@@ -34,6 +40,15 @@ const consumerDS = [
 
 const MakerPDF = () => {
   const newUuid = uuid();
+  let sumNum = 0;
+  let sumPay = 0;
+  let sumOff = 0;
+  let sumAll = 0;
+  const datTime = new Date();
+  let time = {
+    day: datTime.toLocaleDateString("fa-Ir"),
+    time: datTime.toLocaleTimeString("en-GB"),
+  };
 
   const [dataConsumer, setDataConsumer] = useState();
   const [consumer, setConsumer] = useState(false);
@@ -47,7 +62,16 @@ const MakerPDF = () => {
   const [billDate, setBillDate] = useState();
   const [text, setText] = useState();
   const [Discription, setDiscription] = useState(!false);
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState({
+    IRC: "",
+    LotNO: "",
+    discription: "",
+    number: 0,
+    off: 0,
+    pay: 0,
+    text: "",
+    unit: "",
+  });
   const [products, setProducts] = useState([]);
 
   const diabalBTN =
@@ -55,6 +79,12 @@ const MakerPDF = () => {
     !!product?.number &&
     !!product?.unit &&
     !!product?.pay;
+
+  products?.map((i) => {
+    sumNum = Number(i?.number) + Number(sumNum);
+    sumOff = i?.number * i?.off + sumOff;
+    sumPay = i?.number * i?.pay + sumPay;
+  });
 
   return (
     <>
@@ -257,7 +287,7 @@ const MakerPDF = () => {
                   </h1>
                 ) : (
                   <h2> تاریخ</h2>
-                )}{" "}
+                )}
               </div>
               <div className="" onClick={() => setSell((i) => !i)}>
                 {!!typeOFSell?.title ? (
@@ -266,7 +296,7 @@ const MakerPDF = () => {
                   </h1>
                 ) : (
                   <h2>نحوه فروش</h2>
-                )}{" "}
+                )}
               </div>
 
               <div className="" onClick={() => setDiscription((i) => !i)}>
@@ -461,7 +491,16 @@ const MakerPDF = () => {
             } `}
             onClick={() => {
               setProducts((i) => [...i, { id: newUuid, ...product }]);
-              setProduct({});
+              setProduct({
+                IRC: "",
+                LotNO: "",
+                discription: "",
+                number: 0,
+                off: 0,
+                pay: 0,
+                text: "",
+                unit: 0,
+              });
             }}
           >
             افزودن
@@ -469,7 +508,7 @@ const MakerPDF = () => {
         </div>
       </div>
       {/* ================================================================================================== */}
-      <div className="border-t mt-5 max-w-7xl  min-w-[80rem] mx-auto ">
+      <div className="border-t my-5 max-w-7xl  min-w-[80rem] mx-auto  ">
         <div className="flex items-center justify-between  mt-5 relative">
           <div>
             <div>
@@ -557,14 +596,171 @@ const MakerPDF = () => {
         </div>
         {/* ======================================================================================================== */}
         <div className="border border-black rounded-2xl overflow-hidden relative  mt-2">
-          <div className="flex justify-between ">
+          <div className="flex justify-between  mt-2">
             <div></div>
-            <div  className="absolute m-auto right-0 left-0  w-fit">مشخصات کالا یا خدمات مورد معامله</div>
+            <div className="absolute m-auto right-0 left-0  w-fit">
+              مشخصات کالا یا خدمات مورد معامله
+            </div>
             <div className="ml-5"> مبالغ به ریال است</div>
           </div>
-           <div>
-            
-           </div>
+          <div className=" border-black  overflow-hidden relative  mt-2  ">
+            <div className="bg-[#f2f2f2]">
+              <div className="border text-sm pt-[1px]  border-black w-10 h-12 absolute -right-5 -top-1 text-center   -rotate-90 ">
+                حذف
+              </div>
+              <div className="flex   border-y border-black border-opacity-50 h-10 ">
+                <div className=" w-40 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                  IRC
+                </div>
+                <div className=" w-96 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                  شرح کالا یا خدمات
+                </div>
+                <div className=" w-24 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                  Lot NO
+                </div>
+                <div className=" w-14 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                  مقدار
+                </div>
+                <div className=" w-16 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                  واحد
+                </div>
+                <div className=" w-32 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                  بهای واحد
+                </div>
+                <div className=" w-32 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                  بهای کل
+                </div>
+                <div className=" w-32 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                  تخفیف
+                </div>
+                <div className=" w-36 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                  قابل پرداخت
+                </div>
+              </div>
+            </div>
+            <div>
+              {!!products?.length > 0 ? (
+                products.map((i, index) => (
+                  <div
+                    className={` ${
+                      index % 2 != 0 ? `bg-[#f2f2f2]` : ``
+                    } relative`}
+                    key={index}
+                  >
+                    <div className="border-y text-sm pt-[1px]  border-black w-10 h-12 absolute -right-5 -top-1 text-center   -rotate-90 ">
+                      <IoMdClose className="text-red-500  mt-1 mx-auto " />
+                    </div>
+                    <div className="flex text-red-500  border-y border-black border-opacity-50 h-10 ">
+                      <div className=" w-40 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                        {i?.IRC}
+                      </div>
+                      <div className=" w-96 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                        {i?.discription}
+                      </div>
+                      <div className=" w-24 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                        {i?.LotNO}
+                      </div>
+                      <div className=" w-14 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                        {i?.number}
+                      </div>
+                      <div className=" w-16 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                        {i?.unit}
+                      </div>
+                      <div className=" w-32 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                        {sp(i?.pay)}
+                      </div>
+                      <div className=" w-32 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                        {sp(i?.pay * i?.number)}
+                      </div>
+                      <div className=" w-32 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                        {sp(i?.pay * i?.number - i?.off * i?.number)}
+                      </div>
+                      <div className=" w-36 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                        {sp(i?.pay * i?.number)}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-red-500 text-center  mt-2">
+                  محصولی برای ارائه وجود ندارد
+                </p>
+              )}
+            </div>
+            <div className="border-t border-black ">
+              <div className="flex justify-between ">
+                <span className="flex   gap-10 pt-2 pr-2">
+                  نحوه فروش :
+                  {typeOFSellDS.map((i, index) => (
+                    <sapn
+                      key={index}
+                      className={`${
+                        typeOFSell?.id == i?.id
+                          ? `text-black  font-bold`
+                          : `text-gray-500`
+                      }`}
+                    >
+                      {i.title}
+                    </sapn>
+                  ))}
+                </span>
+                <div className="flex -ml-[1px]">
+                  <span className=" border-l border-black pt-1.5 pl-3">
+                    جمع فاکتور
+                  </span>
+                  <div className="  text-rose-500 w-14 text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                    {sp(sumNum)}
+                  </div>
+                  <div className="  text-rose-500 w-[190px] text-center text-nowrap text-sm  border-x py-2.5 border-black"></div>
+                  <div className="  text-rose-500 w-[127px] text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                    {sp(sumAll)}
+                  </div>
+                  <div className="  text-rose-500 w-[127px] text-center text-nowrap text-sm border-x  py-2.5 border-black">
+                    {sumOff}
+                  </div>
+                  <div className="  text-rose-500  w-[144px] text-center text-nowrap text-sm border-r  py-2.5 border-black">
+                    {sp(sumPay)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================================================================== */}
+        {console.log(numberToPersianWords(sumAll))}
+        <div className="flex gap-2 items-center   mt-2">
+          <div className="border rounded-2xl border-black w-1/2 h-32 flex justify-between px-5 py-2 text-gray-500">
+            <p>مهر وامضای خریدار</p>
+            <p>مهر و امضای فروشنده</p>
+          </div>
+          <div className="border flex rounded-2xl border-black w-1/2 h-32 text-gray-500">
+            <div className="w-5/12 border-l-2 border-black h-full text-[12px] relative">
+              <div className=" text-justify mx-2">
+                توضیحات : <span className="text-black">{text}</span>
+              </div>
+              <div className="w-full absolute bottom-0 py-1 pr-2 border-t-2 border-black">
+                کاربر سیستم : اشکان حسنوند {time?.day} <span> </span>
+                {time?.time}
+              </div>
+            </div>
+            <div className="w-7/12 child:h-[41px] text-black text-sm">
+              <div className=" flex justify-between px-2 items-center border-b-2 border-black">
+                <span> تخفیف:</span>
+                <span className="text-red-500">{sp(sumOff)}</span>
+              </div>
+              <div className="flex justify-between px-2 items-center border-b-2 border-black">
+                <span> جمع کل:</span>
+                <span className="text-red-500">{sp(sumPay)}</span>
+              </div>
+              <div className="flex justify-between px-2 items-center">
+                <span>جمع به حروف: </span>
+                <span className="text-red-500">
+                  {numberToPersianWords(sumPay)} ریال
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
