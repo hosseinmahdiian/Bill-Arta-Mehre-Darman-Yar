@@ -6,6 +6,7 @@ import { IoIosArrowDown, IoIosArrowUp, IoIosCalendar } from "react-icons/io";
 import { MdRadioButtonUnchecked } from "react-icons/md";
 import { BsCheck2Circle } from "react-icons/bs";
 import uuid from "react-uuid";
+import Logo from "../assets/svg/LOGO.svg";
 
 const typeOfBillsDS = [
   { title: "پیش فاکتور", id: 1 },
@@ -17,6 +18,18 @@ const typeOFSellDS = [
   { title: "غیر نقدی", id: 2 },
   { title: "سایت", id: 3 },
   { title: "سر رسید ", id: 4 },
+];
+
+const consumerDS = [
+  {
+    title: "بیمارستان عشایر",
+    addres: "  لرستان - خرم آباد - خیابان انقلاب بیمارستان شهدای عشایر",
+    id: 14013528778,
+    tell: "",
+    nationalID: 14002438448,
+    economic: 411399958955,
+    addCode: 6816991451,
+  },
 ];
 
 const MakerPDF = () => {
@@ -41,9 +54,7 @@ const MakerPDF = () => {
     !!product?.discription &&
     !!product?.number &&
     !!product?.unit &&
-    !!product?.pay
-      
-  console.log(product, products);
+    !!product?.pay;
 
   return (
     <>
@@ -62,7 +73,7 @@ const MakerPDF = () => {
         onClick={() => {
           !sell && setSell((i) => !i);
         }}
-      ></div>{" "}
+      ></div>
       <div
         className={`${
           Discription ? `hidden` : `fixed`
@@ -84,10 +95,9 @@ const MakerPDF = () => {
           minDate={new Date()}
           calendarPosition="bottom-right"
           onChange={(date) => {
-            setDate((item) => ({
-              ...item,
+            setDate({
               CreationDate: `${date?.year}/${date?.month.number}/${date?.day}`,
-            }));
+            });
           }}
         />
       </div>
@@ -168,7 +178,9 @@ const MakerPDF = () => {
                 onClick={() => setConsumer((i) => !i)}
               >
                 {!!dataConsumer ? (
-                  <h1>{dataConsumer.title}</h1>
+                  <h1 className="text-nowrap text-sm mt-1 text-red-500">
+                    {dataConsumer.title}
+                  </h1>
                 ) : (
                   <h2>خریدار</h2>
                 )}
@@ -182,8 +194,10 @@ const MakerPDF = () => {
                     consumer ? `absolute` : `hidden`
                   } absolute top-14 border w-36 right-0 rounded-xl bg-white child-hover:bg-slate-200 child:py-1 z-20 `}
                 >
-                  {typeOfBillsDS?.map((i) => (
-                    <h2 key={i.id}> {i.title}</h2>
+                  {consumerDS?.map((i) => (
+                    <h2 key={i.id} onClick={() => setDataConsumer(i)}>
+                      {i.title}
+                    </h2>
                   ))}
                 </div>
               </div>
@@ -192,7 +206,9 @@ const MakerPDF = () => {
                 onClick={() => setTypeOfBill((i) => !i)}
               >
                 {!!typeOfBills ? (
-                  <h1>{typeOfBills.title}</h1>
+                  <h1 className="text-nowrap text-sm mt-1 text-red-500">
+                    {typeOfBills.title}
+                  </h1>
                 ) : (
                   <h2>نوع فاکتور</h2>
                 )}
@@ -208,7 +224,6 @@ const MakerPDF = () => {
                 >
                   {typeOfBillsDS?.map((i) => (
                     <h2 key={i.id} onClick={() => setTypeOfBills(i)}>
-                      {" "}
                       {i.title}
                     </h2>
                   ))}
@@ -216,7 +231,7 @@ const MakerPDF = () => {
               </div>
               <div className=" relative !pt-0 ">
                 <input
-                  className="peer  h-5  rounded-[10px] outline-none  w-full mt-2  "
+                  className="peer text-red-500 h-5  rounded-[10px] outline-none  w-full mt-2  "
                   placeholder=" "
                   id="BillNO"
                   name="BillNO"
@@ -236,10 +251,22 @@ const MakerPDF = () => {
                 className="flex gap-2 pb-2 items-center justify-center "
               >
                 <IoIosCalendar />
-                <p>تاریخ</p>
+                {!!date?.CreationDate ? (
+                  <h1 className="text-nowrap text-sm mt-1 text-red-500">
+                    {date?.CreationDate}
+                  </h1>
+                ) : (
+                  <h2> تاریخ</h2>
+                )}{" "}
               </div>
               <div className="" onClick={() => setSell((i) => !i)}>
-                نحوه فروش
+                {!!typeOFSell?.title ? (
+                  <h1 className="text-nowrap text-sm mt-1 text-red-500">
+                    {typeOFSell.title}
+                  </h1>
+                ) : (
+                  <h2>نحوه فروش</h2>
+                )}{" "}
               </div>
 
               <div className="" onClick={() => setDiscription((i) => !i)}>
@@ -252,14 +279,14 @@ const MakerPDF = () => {
           </div>
         </div>
         {/* ======================================================= */}
-        <div className="flex items-center">
+        <div className="flex items-center justify-between w-full">
           <div className="">
             <div className="flex items-center gap-2 mt-10">
               <div className=" relative   border border-black  rounded-[10px] w-40">
                 <input
                   className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
                   placeholder=" "
-                  value={product?.IRC}
+                  value={!!product?.IRC ? product?.IRC : ""}
                   id="IRC"
                   name="IRC"
                   onChange={(e) =>
@@ -275,11 +302,11 @@ const MakerPDF = () => {
                   IRC
                 </label>
               </div>
-              <div className=" relative   border border-black  rounded-[10px] w-[450px]">
+              <div className=" relative  border border-black  rounded-[10px] w-[450px]">
                 <input
                   className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
                   placeholder=" "
-                  value={product?.discription}
+                  value={!!product?.discription ? product?.discription : ""}
                   id="discription"
                   name="discription"
                   onChange={(e) =>
@@ -304,7 +331,7 @@ const MakerPDF = () => {
                 <input
                   className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
                   placeholder=" "
-                  value={product?.LotNO}
+                  value={!!product?.LotNO ? product?.LotNO : ""}
                   id="LotNO"
                   name="LotNO"
                   onChange={(e) =>
@@ -324,7 +351,7 @@ const MakerPDF = () => {
                 <input
                   className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
                   placeholder=" "
-                  value={product?.number}
+                  value={!!product?.number ? product?.number : ""}
                   id="number"
                   name="number"
                   onChange={(e) =>
@@ -344,7 +371,7 @@ const MakerPDF = () => {
                 <input
                   className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
                   placeholder=" "
-                  value={product?.unit}
+                  value={!!product?.unit ? product?.unit : ""}
                   id="unit"
                   name="unit"
                   onChange={(e) =>
@@ -364,7 +391,7 @@ const MakerPDF = () => {
                 <input
                   className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
                   placeholder=" "
-                  value={product?.pay}
+                  value={!!product?.pay ? product?.pay : ""}
                   id="pay"
                   name="pay"
                   onChange={(e) =>
@@ -384,7 +411,7 @@ const MakerPDF = () => {
                 <input
                   className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
                   placeholder=" "
-                  value={product?.off}
+                  value={!!product?.off ? product?.off : ""}
                   id="off"
                   name="off"
                   onChange={(e) =>
@@ -400,12 +427,12 @@ const MakerPDF = () => {
                   تخفیف
                 </label>
               </div>
-            </div>{" "}
-            <div className=" relative   border border-black  rounded-[10px] w-full">
+            </div>
+            <div className=" relative mt-2  border border-black  rounded-[10px] w-full">
               <input
                 className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
                 placeholder=" "
-                value={product?.text}
+                value={!!product?.text ? product?.text : ""}
                 id="text"
                 name="text"
                 onChange={(e) =>
@@ -424,13 +451,13 @@ const MakerPDF = () => {
           </div>
           <button
             disabled={!diabalBTN}
-            className={`w-40 mx-auto  h-8 bg-blue-500 block pb-1.5  rounded-[10px] text-white ${
+            className={`w-40   h-9   block pb-1.5  rounded-[10px] ${
               !!product?.discription &&
               !!product?.number &&
               !!product?.unit &&
               !!product?.pay
                 ? `bg-blue-500 text-white `
-                : `bg-gray-200 text-gray-700 `
+                : `bg-gray-100 text-gray-800 `
             } `}
             onClick={() => {
               setProducts((i) => [...i, { id: newUuid, ...product }]);
@@ -439,6 +466,105 @@ const MakerPDF = () => {
           >
             افزودن
           </button>
+        </div>
+      </div>
+      {/* ================================================================================================== */}
+      <div className="border-t mt-5 max-w-7xl  min-w-[80rem] mx-auto ">
+        <div className="flex items-center justify-between  mt-5 relative">
+          <div>
+            <div>
+              شماره فاکتور : <span className="text-red-500  ">{billNO}</span>
+            </div>
+            <div>
+              تاریخ صدور :
+              <span className="text-red-500 pr-2">{date?.CreationDate}</span>
+            </div>
+            <div>صفحه 1 از 1</div>
+          </div>
+          <div className=" absolute right-0 left-0 mx-auto w-fit ">
+            <h1 className="mx-auto w-fit font-bold mb-3 ">
+              {!!typeOfBills?.title ? typeOfBills?.title : "فاکتور"}
+            </h1>
+            <p>شرکت تجهیزات پزشکی آرتا مهر درمان یار</p>
+          </div>
+          <img src={Logo} alt="" />
+        </div>
+
+        {/* ==================================================================================================== */}
+
+        <div className="border border-black rounded-2xl overflow-hidden relative h-20 mt-2">
+          <div className="border border-black w-24 h-8 absolute -right-9 top-6 text-center   -rotate-90 ">
+            فروشنده
+          </div>
+          <div className="flex justify-around  py-3.5">
+            <div className="text-sm ">
+              <p className="mb-2">نام فروشنده : شرکت آرتا مهر درمان یار</p>
+              <p>
+                آدرس : لرستان - خرم آباد - شهرک صنعتی شماره یک - خیابان ابتکار 4
+              </p>
+            </div>
+            <div className="text-sm ">
+              <p className="mb-2">شماره کارت ملت : 6104338800754794</p>
+              <p>شماره شبای ملت : IR 730120000000002292606004</p>
+            </div>
+            <div className="text-sm ">
+              <p className="mb-2"> شناسه ملی : 14013528778</p>
+              <p> تلفن : 09216919291 </p>
+            </div>
+            <div className="text-sm ">
+              <p className="mb-2">کدپستی : 14013528778</p>
+              <p>شماره اقتصادی : 092116919261 </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="border border-black rounded-2xl overflow-hidden relative h-20 mt-2">
+          <div className="border border-black w-24 h-8 absolute -right-9 top-6 text-center   -rotate-90 ">
+            خریدار
+          </div>
+          <div className="flex justify-around  py-3.5">
+            <div className="text-sm ">
+              <p className="mb-2">
+                نام فروشنده :
+                <span className="text-red-500">{dataConsumer?.title}</span>
+              </p>
+              <p>
+                آدرس :
+                <span className="text-red-500">{dataConsumer?.addres}</span>
+              </p>
+            </div>
+
+            <div className="text-sm ">
+              <p className="mb-2">
+                شناسه ملی :
+                <span className="text-red-500">{dataConsumer?.nationalID}</span>
+              </p>
+              <p>
+                تلفن :<span className="text-red-500">{dataConsumer?.tell}</span>
+              </p>
+            </div>
+            <div className="text-sm ">
+              <p className="mb-2">
+                کدپستی :
+                <span className="text-red-500">{dataConsumer?.addCode}</span>
+              </p>
+              <p>
+                شماره اقتصادی :
+                <span className="text-red-500">{dataConsumer?.economic}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        {/* ======================================================================================================== */}
+        <div className="border border-black rounded-2xl overflow-hidden relative  mt-2">
+          <div className="flex justify-between ">
+            <div></div>
+            <div  className="absolute m-auto right-0 left-0  w-fit">مشخصات کالا یا خدمات مورد معامله</div>
+            <div className="ml-5"> مبالغ به ریال است</div>
+          </div>
+           <div>
+            
+           </div>
         </div>
       </div>
     </>
