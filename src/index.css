@@ -68,3 +68,7 @@
   -ms-overflow-style: none;
 }
 
+*{
+  line-height: initial !important;
+}
+

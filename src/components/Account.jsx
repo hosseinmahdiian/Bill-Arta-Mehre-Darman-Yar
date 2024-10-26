@@ -24,7 +24,7 @@ const Acconut = () => {
 let notif = false;
 
   return (
-    <div className="  h-full bg-white  relative ont-IrSans mt-16 max-w-2xl mx-auto">
+    <div className="  h-full bg-white  relative ont-IrSans mt-16 max-w-[380px] mx-auto">
       <div className={` block`}>
         <NavLink>
           <img src={logo} alt="" className="mx-auto mb-20 w-56 mt-40 " />
