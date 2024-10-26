@@ -93,96 +93,7 @@ const MakerPDF = () => {
     text: "",
     unit: "",
   });
-  const [products, setProducts] = useState([
-    {
-      id: "a57d2c70-d973-6476-1627-f8873af59688",
-      IRC: "123456789123456789",
-      LotNO: "123456789123",
-      discription: " fh khl dh onh kif ioc  h ,pu9i vescaw  mhiu vdtr ewc",
-      number: "123",
-      off: "20000000",
-      pay: "10000000000",
-      text: "oigh gsv nmhxdrt ewzsc rgn67 umijh 0i,k mhyu 5der s4w wscaze w zarbt yumnbh u,j .iok i98 7n6 54evd wsc tbf",
-      unit: "دستگاه",
-    },
-    {
-      id: "08aed9ae-23b5-9f91-e82b-b39b250b80c0",
-      IRC: "123456789123456789",
-      LotNO: "123456789123",
-      discription: " fh khl dh onh kif ioc  h ,pu9i vescaw   mhiu vdtr ewc",
-      number: "123",
-      off: "20000000",
-      pay: "10000000000",
-      text: "oigh gsv nmhxdrt ewzsc rgn67 umijh 0i,k mhyu 5der s4w wscaze w zarbt yumnbh u,j .iok i98 7n6 54evd wsc tbf",
-      unit: "دستگاه",
-    },
-    {
-      id: "e1d624e9-15a6-eec2-264a-8f61bda3faa2",
-      IRC: "123456789123456789",
-      LotNO: "123456789123",
-      discription: " fh khl dh onh kif ioc  h ,pu9i vescaw   mhiu vdtr ewc",
-      number: "123",
-      off: "20000000",
-      pay: "10000000000",
-      text: "oigh gsv nmhxdrt ewzsc rgn67 umijh 0i,k mhyu 5der s4w wscaze w zarbt yumnbh u,j .iok i98 7n6 54evd wsc tbf",
-      unit: "دستگاه",
-    },
-    {
-      id: "43a19e64-b57e-3361-3fde-c890e57c772c",
-      IRC: "123456789123456789",
-      LotNO: "123456789123",
-      discription: " fh khl dh onh kif ioc  h ,pu9i vescaw   mhiu vdtr ewc",
-      number: "123",
-      off: "20000000",
-      pay: "10000000000",
-      text: "oigh gsv nmhxdrt ewzsc rgn67 umijh 0i,k mhyu 5der s4w wscaze w zarbt yumnbh u,j .iok i98 7n6 54evd wsc tbf",
-      unit: "دستگاه",
-    },
-    {
-      id: "53da574f-1427-b48e-a251-fadee031d3e5",
-      IRC: "123456789123456789",
-      LotNO: "123456789123",
-      discription: " fh khl dh onh kif ioc  h ,pu9i vescaw   mhiu vdtr ewc",
-      number: "123",
-      off: "20000000",
-      pay: "10000000000",
-      text: "oigh gsv nmhxdrt ewzsc rgn67 umijh 0i,k mhyu 5der s4w wscaze w zarbt yumnbh u,j .iok i98 7n6 54evd wsc tbf",
-      unit: "دستگاه",
-    },
-    {
-      id: "e1d624e9-15a6-eec2-264a-8f61bda3faa2",
-      IRC: "123456789123456789",
-      LotNO: "123456789123",
-      discription: " fh khl dh onh kif ioc  h ,pu9i vescaw   mhiu vdtr ewc",
-      number: "123",
-      off: "20000000",
-      pay: "10000000000",
-      text: "oigh gsv nmhxdrt ewzsc rgn67 umijh 0i,k mhyu 5der s4w wscaze w zarbt yumnbh u,j .iok i98 7n6 54evd wsc tbf",
-      unit: "دستگاه",
-    },
-    {
-      id: "43a19e64-b57e-3361-3fde-c890e57c772c",
-      IRC: "123456789123456789",
-      LotNO: "123456789123",
-      discription: " fh khl dh onh kif ioc  h ,pu9i vescaw   mhiu vdtr ewc",
-      number: "123",
-      off: "20000000",
-      pay: "10000000000",
-      text: "oigh gsv nmhxdrt ewzsc rgn67 umijh 0i,k mhyu 5der s4w wscaze w zarbt yumnbh u,j .iok i98 7n6 54evd wsc tbf",
-      unit: "دستگاه",
-    },
-    {
-      id: "53da574f-1427-b48e-a251-fadee031d3e5",
-      IRC: "123456789123456789",
-      LotNO: "123456789123",
-      discription: " fh khl dh onh kif ioc  h ,pu9i vescaw   mhiu vdtr ewc",
-      number: "123",
-      off: "20000000",
-      pay: "10000000000",
-      text: "oigh gsv nmhxdrt ewzsc rgn67 umijh 0i,k mhyu 5der s4w wscaze w zarbt yumnbh u,j .iok i98 7n6 54evd wsc tbf",
-      unit: "دستگاه",
-    },
-  ]);
+  const [products, setProducts] = useState([]);
 
   const ref1 = useRef();
   const ref2 = useRef();
@@ -1468,44 +1379,6 @@ const MakerPDF = () => {
                     محصولی برای ارائه وجود ندارد
                   </p>
                 )}
-              </div>
-              <div className="  ">
-                <div className="flex justify-between ">
-                  <span className="flex   gap-6 pt-2 pr-2">
-                    نحوه فروش :
-                    {typeOFSellDS.map((i, index) => (
-                      <span
-                        key={index}
-                        className={`${
-                          typeOFSell?.id == i?.id
-                            ? `text-black  font-bold`
-                            : `text-gray-500`
-                        }`}
-                      >
-                        {i.title}
-                      </span>
-                    ))}
-                    <p className="">{billDate?.dateOver}</p>
-                  </span>
-                  <div className="flex  ">
-                    <span className=" border-l border-black pt-1.5 pl-3">
-                      جمع فاکتور
-                    </span>
-                    <div className="   w-[52px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      {sp(sumNum)}
-                    </div>
-                    <div className="   w-[164px] text-center text-nowrap text-sm border-l py-2.5 border-black"></div>
-                    <div className="   w-[119px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      {sp(sumPay)}
-                    </div>
-                    <div className="    w-[105px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      {sumOff}
-                    </div>
-                    <div className="    w-36 -mr-2.5 text-center text-nowrap text-sm   py-2.5 border-black">
-                      {sp(sumPay - sumOff)}
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
