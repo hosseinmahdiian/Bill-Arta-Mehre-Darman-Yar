@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/svg/LOGO.svg";
 import { ChengHandler } from "../Functions/Fonctions";
+import toast from "react-hot-toast";
+import { reducerContext } from "../context/context";
+
+const users = [
+  { name: "اشکان حسنوند", userName: "09219619291", password: "00100", id: 1 },
+  { name: "اعظم خدائی", userName: "4071822813", password: "Azam4060", id: 2 },
+  { name: "علی معتمدی", userName: "093052550916", password: "Ali0916", id: 3 },
+];
 
 const Acconut = () => {
   const navigate = useNavigate();
@@ -10,6 +18,9 @@ const Acconut = () => {
   const [role, setRole] = useState({ userName: "", password: "" });
   const [res, setRes] = useState();
   const [eye, setEye] = useState(true);
+
+  const reducer = useContext(reducerContext);
+  const [reduce, dispach] = reducer;
 
   return (
     <div className="  h-full bg-white  relative ont-IrSans mt-16 max-w-2xl mx-auto">
@@ -66,10 +77,23 @@ const Acconut = () => {
 
           <button
             className={` ${
-              !(!!role.userName && role.password.length >= 8)
+              !(!!role.userName && !!role.password)
                 ? ` bg-gray-200 text-gray-600`
                 : ` bg-blue-500 text-white`
             } w-[calc(100%-40px)] mx-auto h-12  block mt-10 rounded-[10px] pb-2   `}
+            onClick={() => {
+              users.map((i) => {
+                if (
+                  i.userName == role.userName &&
+                  i.password == role.password
+                ) {
+                  dispach({ type: "User", payload: i });
+                  dispach({ type: "Login" });
+                  navigate("/");
+                }
+              });
+              !reduce.Login && toast.error("رمز یا پسورد اشتباه است");
+            }}
           >
             ورود
           </button>

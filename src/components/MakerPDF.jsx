@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Calendar } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
@@ -15,6 +15,8 @@ import Logo from "../assets/svg/LOGO.svg";
 import { numberToPersianWords, sp } from "../Functions/Fonctions";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { reducerContext } from "../context/context";
+import { useNavigate } from "react-router-dom";
 
 const typeOfBillsDS = [
   { title: "پیش فاکتور", id: 1 },
@@ -48,8 +50,22 @@ const MakerPDF = () => {
   const datTime = new Date();
   let time = {
     day: datTime.toLocaleDateString("fa-Ir"),
-    time: datTime.toLocaleTimeString("en-GB"),
+    time: datTime.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
   };
+  const navigate = useNavigate();
+
+  const reducer = useContext(reducerContext);
+  const [reduce, dispach] = reducer;
+
+  useEffect(() => {
+    if (!reduce.Login) {
+      navigate("/aa");
+    }
+  }, []);
+
 
   const [dataConsumer, setDataConsumer] = useState();
   const [consumer, setConsumer] = useState(false);
@@ -75,7 +91,7 @@ const MakerPDF = () => {
   });
   const [products, setProducts] = useState([]);
 
-  const ref = useRef();
+  const ref1 = useRef();
   const diabalBTN =
     !!product?.discription &&
     !!product?.number &&
@@ -84,15 +100,15 @@ const MakerPDF = () => {
 
   products?.map((i) => {
     sumNum = Number(i?.number) + Number(sumNum);
-    sumOff = i?.number * i?.off + sumOff;
-    sumPay = i?.number * i?.pay + sumPay;
+    sumOff = Number(i?.off) + Number(sumOff);
+    sumPay = Number(i?.number) * Number(i?.pay) + Number(sumPay);
   });
 
   const handelPDF = async () => {
-    const input = ref.current;
+    const input1 = ref1.current;
 
     try {
-      const canvas = await html2canvas(input);
+      const canvas = await html2canvas(input1, { scale: 1 });
       const imageData = canvas.toDataURL("image/png");
       const PDF = new jsPDF({
         orientation: "landscape",
@@ -147,7 +163,7 @@ const MakerPDF = () => {
           name="expirDate"
           calendar={persian}
           locale={persian_fa}
-          minDate={new Date()}
+          // minDate={new Date()}
           calendarPosition="bottom-right"
           onChange={(date) => {
             setDate({
@@ -184,7 +200,7 @@ const MakerPDF = () => {
             name="expirDate"
             calendar={persian}
             locale={persian_fa}
-            minDate={new Date()}
+            // minDate={new Date()}
             calendarPosition="bottom-right"
             onChange={(date) => {
               setBillDate(() => ({
@@ -286,7 +302,7 @@ const MakerPDF = () => {
               </div>
               <div className=" relative !pt-0 ">
                 <input
-                  className="peer  h-5  rounded-[10px] outline-none  w-full mt-2  "
+                  className="peer  h-5  rounded-[10px] outline-none   w-full mt-2  "
                   placeholder=" "
                   id="BillNO"
                   name="BillNO"
@@ -294,7 +310,7 @@ const MakerPDF = () => {
                 />
                 <label
                   htmlFor="BillNO"
-                  className={`absolute start-1 IrHomama font-bold    rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                  className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
                     !!billNO ? `start-2.5 -top-2 !text-[12px]` : `top-0.5`
                   }`}
                 >
@@ -342,7 +358,7 @@ const MakerPDF = () => {
             <div className="flex items-center gap-2 mt-10">
               <div className=" relative   border border-black  rounded-[10px] w-40">
                 <input
-                  className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
+                  className="peer  border rounded-[10px] outline-none px-3 border-none h-8 w-full  "
                   placeholder=" "
                   value={!!product?.IRC ? product?.IRC : ""}
                   id="IRC"
@@ -353,8 +369,8 @@ const MakerPDF = () => {
                 />
                 <label
                   htmlFor="IRC"
-                  className={`absolute start-1 IrHomama font-bold   rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
-                    !!product?.IRC ? `start-2.5 -top-2 !text-sm` : `top-1`
+                  className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                    !!product?.IRC ? `start-2.5 -top-2 !text-[12px]` : `top-1`
                   }`}
                 >
                   IRC
@@ -362,7 +378,7 @@ const MakerPDF = () => {
               </div>
               <div className=" relative  border border-black  rounded-[10px] w-[450px]">
                 <input
-                  className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
+                  className="peer  border rounded-[10px] outline-none px-3 border-none h-8 w-full  "
                   placeholder=" "
                   value={!!product?.discription ? product?.discription : ""}
                   id="discription"
@@ -376,9 +392,9 @@ const MakerPDF = () => {
                 />
                 <label
                   htmlFor="discription"
-                  className={`absolute start-1 IrHomama font-bold   rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                  className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
                     !!product?.discription
-                      ? `start-2.5 -top-2 !text-sm`
+                      ? `start-2.5 -top-2 !text-[12px]`
                       : `top-1`
                   }`}
                 >
@@ -387,7 +403,7 @@ const MakerPDF = () => {
               </div>
               <div className=" relative   border border-black  rounded-[10px] w-20">
                 <input
-                  className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
+                  className="peer  border rounded-[10px] outline-none px-3 border-none h-8 w-full  "
                   placeholder=" "
                   value={!!product?.LotNO ? product?.LotNO : ""}
                   id="LotNO"
@@ -398,8 +414,8 @@ const MakerPDF = () => {
                 />
                 <label
                   htmlFor="LotNO"
-                  className={`absolute start-1 IrHomama font-bold   rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
-                    !!product?.LotNO ? `start-2.5 -top-2 !text-sm` : `top-1`
+                  className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                    !!product?.LotNO ? `start-2.5 -top-2 !text-[12px]` : `top-1`
                   }`}
                 >
                   Lot NO
@@ -407,7 +423,7 @@ const MakerPDF = () => {
               </div>
               <div className=" relative   border border-black  rounded-[10px] w-16">
                 <input
-                  className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
+                  className="peer  border rounded-[10px] outline-none px-3 border-none h-8 w-full  "
                   placeholder=" "
                   value={!!product?.number ? product?.number : ""}
                   id="number"
@@ -418,8 +434,10 @@ const MakerPDF = () => {
                 />
                 <label
                   htmlFor="number"
-                  className={`absolute start-1 IrHomama font-bold   rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
-                    !!product?.number ? `start-2.5 -top-2 !text-sm` : `top-1`
+                  className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                    !!product?.number
+                      ? `start-2.5 -top-2 !text-[12px]`
+                      : `top-1`
                   }`}
                 >
                   مقدار
@@ -427,7 +445,7 @@ const MakerPDF = () => {
               </div>
               <div className=" relative   border border-black  rounded-[10px] w-16">
                 <input
-                  className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
+                  className="peer  border rounded-[10px] outline-none px-3 border-none h-8 w-full  "
                   placeholder=" "
                   value={!!product?.unit ? product?.unit : ""}
                   id="unit"
@@ -438,8 +456,8 @@ const MakerPDF = () => {
                 />
                 <label
                   htmlFor="unit"
-                  className={`absolute start-1 IrHomama font-bold   rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
-                    !!product?.unit ? `start-2.5 -top-2 !text-sm` : `top-1`
+                  className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                    !!product?.unit ? `start-2.5 -top-2 !text-[12px]` : `top-1`
                   }`}
                 >
                   واحد
@@ -447,7 +465,7 @@ const MakerPDF = () => {
               </div>
               <div className=" relative   border border-black  rounded-[10px] w-40">
                 <input
-                  className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
+                  className="peer  border rounded-[10px] outline-none px-3 border-none h-8 w-full  "
                   placeholder=" "
                   value={!!product?.pay ? product?.pay : ""}
                   id="pay"
@@ -458,8 +476,8 @@ const MakerPDF = () => {
                 />
                 <label
                   htmlFor="pay"
-                  className={`absolute start-1 IrHomama font-bold   rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
-                    !!product?.pay ? `start-2.5 -top-2 !text-sm` : `top-1`
+                  className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                    !!product?.pay ? `start-2.5 -top-2 !text-[12px]` : `top-1`
                   }`}
                 >
                   بهای واحد
@@ -467,7 +485,7 @@ const MakerPDF = () => {
               </div>
               <div className=" relative   border border-black  rounded-[10px] w-20">
                 <input
-                  className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
+                  className="peer  border rounded-[10px] outline-none px-3 border-none h-8 w-full  "
                   placeholder=" "
                   value={!!product?.off ? product?.off : ""}
                   id="off"
@@ -478,8 +496,8 @@ const MakerPDF = () => {
                 />
                 <label
                   htmlFor="off"
-                  className={`absolute start-1 IrHomama font-bold   rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
-                    !!product?.off ? `start-2.5 -top-2 !text-sm` : `top-1`
+                  className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                    !!product?.off ? `start-2.5 -top-2 !text-[12px]` : `top-1`
                   }`}
                 >
                   تخفیف
@@ -488,7 +506,7 @@ const MakerPDF = () => {
             </div>
             <div className=" relative mt-2  border border-black  rounded-[10px] w-full">
               <input
-                className="peer  border rounded-[10px] outline-none border-none h-8 w-full  "
+                className="peer  border rounded-[10px] outline-none px-3 border-none h-8 w-full  "
                 placeholder=" "
                 value={!!product?.text ? product?.text : ""}
                 id="text"
@@ -499,8 +517,8 @@ const MakerPDF = () => {
               />
               <label
                 htmlFor="text"
-                className={`absolute start-1 IrHomama font-bold   rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
-                  !!product?.text ? `start-2.5 -top-2 !text-sm` : `top-1`
+                className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                  !!product?.text ? `start-2.5 -top-2 !text-[12px]` : `top-1`
                 }`}
               >
                 توضیحات
@@ -538,7 +556,7 @@ const MakerPDF = () => {
       {/* ================================================================================================== */}
       <div
         className="border-t my-5 max-w-7xl  min-w-[80rem] mx-auto px-5  "
-        ref={ref}
+        ref={ref1}
       >
         <div className="flex items-center justify-between  mt-5 relative">
           <div>
@@ -561,11 +579,11 @@ const MakerPDF = () => {
 
         {/* ==================================================================================================== */}
 
-        <div className="border border-black rounded-2xl overflow-hidden relative h-20 mt-2">
-          <div className="border border-black w-24 h-8 absolute -right-9 top-6 text-center   -rotate-90 ">
+        <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
+          <div className="border-t border-black w-24 h-5 absolute -right-9 top-6 text-center text-sm  -rotate-90 ">
             فروشنده
           </div>
-          <div className="flex justify-around  py-3.5">
+          <div className="flex justify-between mx-9 my-1.5">
             <div className="text-sm ">
               <p className="mb-2">نام فروشنده : شرکت آرتا مهر درمان یار</p>
               <p>
@@ -587,11 +605,11 @@ const MakerPDF = () => {
           </div>
         </div>
 
-        <div className="border border-black rounded-2xl overflow-hidden relative h-20 mt-2">
-          <div className="border border-black w-24 h-8 absolute -right-9 top-6 text-center   -rotate-90 ">
+        <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
+          <div className="border-t border-black w-24 h-5 absolute -right-9 top-6 text-center text-sm  -rotate-90 ">
             خریدار
           </div>
-          <div className="flex justify-around  py-3.5">
+          <div className="flex justify-between mx-9 my-1.5 ">
             <div className="text-sm ">
               <p className="mb-2">
                 نام فروشنده :<span className="">{dataConsumer?.title}</span>
@@ -620,7 +638,7 @@ const MakerPDF = () => {
             </div>
           </div>
         </div>
-        {/* ======================================================================================================== */}
+        {/*qqqqqqqqqqqqqqqqqqqqqqqqqqqqq======================================================================================================== */}
         <div className="border border-black rounded-2xl overflow-hidden relative  mt-2">
           <div className="flex justify-between  mt-2">
             <div></div>
@@ -634,14 +652,14 @@ const MakerPDF = () => {
               <div className="border-t text-sm pt-[1px]  border-black w-10 h-12 absolute -right-5 -top-1 text-center   -rotate-90 ">
                 ردیف
               </div>
-              <div className="flex   border-y border-black border-opacity-50 h-10 ">
-                <div className=" w-40 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+              <div className="flex  pl-1.5 border-y border-black border-opacity-50 h-10 ">
+                <div className=" w-44 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                   IRC
                 </div>
                 <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                   شرح کالا یا خدمات
                 </div>
-                <div className=" w-24 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                   Lot NO
                 </div>
                 <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
@@ -650,13 +668,13 @@ const MakerPDF = () => {
                 <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                   واحد
                 </div>
-                <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                   بهای واحد
                 </div>
                 <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                   بهای کل
                 </div>
-                <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                   تخفیف
                 </div>
                 <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
@@ -673,17 +691,22 @@ const MakerPDF = () => {
                     } relative`}
                     key={index}
                   >
-                    <div className="border-l text-sm    border-black w-6 h-10 absolute -right- -top- text-center    ">
+                    <div
+                      className="border-l text-sm    border-black w-6 h-10 absolute -right- -top- text-center    "
+                      onClick={() =>
+                        setProducts(products.filter((item) => item.id != i.id))
+                      }
+                    >
                       <p className="pt-2.5">{index + 1}</p>
                     </div>
-                    <div className="flex   border-b border-black border-opacity-50 h-10 ">
-                      <div className=" w-40 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                    <div className="flex  pl-1.5  border-b border-black border-opacity-50 h-10 ">
+                      <div className=" w-44 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                         {i?.IRC}
                       </div>
                       <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                         {i?.discription}
                       </div>
-                      <div className=" w-24 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                      <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                         {i?.LotNO}
                       </div>
                       <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
@@ -692,17 +715,17 @@ const MakerPDF = () => {
                       <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                         {i?.unit}
                       </div>
-                      <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                      <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                         {sp(i?.pay)}
                       </div>
                       <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
                         {sp(i?.pay * i?.number)}
                       </div>
-                      <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                        {sp(i?.off * i?.number)}
+                      <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                        {sp(i?.off)}
                       </div>
                       <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
-                        {sp(i?.pay * i?.number - i?.off * i?.number)}
+                        {sp(i?.pay * i?.number - i?.off)}
                       </div>
                     </div>
                   </div>
@@ -718,7 +741,7 @@ const MakerPDF = () => {
                 <span className="flex   gap-6 pt-2 pr-2">
                   نحوه فروش :
                   {typeOFSellDS.map((i, index) => (
-                    <sapn
+                    <span
                       key={index}
                       className={`${
                         typeOFSell?.id == i?.id
@@ -727,7 +750,7 @@ const MakerPDF = () => {
                       }`}
                     >
                       {i.title}
-                    </sapn>
+                    </span>
                   ))}
                   <p className="">{billDate?.dateOver}</p>
                 </span>
@@ -735,17 +758,17 @@ const MakerPDF = () => {
                   <span className=" border-l border-black pt-1.5 pl-3">
                     جمع فاکتور
                   </span>
-                  <div className="   w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                  <div className="   w-[53px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
                     {sp(sumNum)}
                   </div>
-                  <div className="   w-[184px] text-center text-nowrap text-sm border-l py-2.5 border-black"></div>
-                  <div className="   w-[123px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                  <div className="   w-[166px] text-center text-nowrap text-sm border-l py-2.5 border-black"></div>
+                  <div className="   w-[121px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
                     {sp(sumPay)}
                   </div>
-                  <div className="    w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
+                  <div className="    w-[106px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
                     {sumOff}
                   </div>
-                  <div className="    w-36 text-center text-nowrap text-sm   py-2.5 border-black">
+                  <div className="    w-[142px] text-center text-nowrap text-sm   py-2.5 border-black">
                     {sp(sumPay - sumOff)}
                   </div>
                 </div>
@@ -767,7 +790,7 @@ const MakerPDF = () => {
                 <span className="text-black w-11/12 ">{text}</span>
               </div>
               <div className="w-full absolute bottom-0 py-1 pr-2 border-t border-black">
-                کاربر سیستم : اشکان حسنوند {time?.day} <span> </span>
+                کاربر سیستم : {reduce?.User?.name} {time?.day} <span> </span>
                 {time?.time}
               </div>
             </div>
