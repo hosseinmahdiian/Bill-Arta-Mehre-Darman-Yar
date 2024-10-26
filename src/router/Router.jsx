@@ -7,8 +7,8 @@ import MakerPDF from "../components/MakerPDF";
 const Routers = () => {
   return (
     <Routes>
-      <Route index element={<MakerPDF />} />
-      <Route path="/aa" element={<Acconut />} />
+      <Route path="/bill" element={<MakerPDF />} />
+      <Route index element={<Acconut />} />
     </Routes>
   );
 };

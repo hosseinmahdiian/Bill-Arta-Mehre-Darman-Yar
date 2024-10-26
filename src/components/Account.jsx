@@ -21,6 +21,7 @@ const Acconut = () => {
 
   const reducer = useContext(reducerContext);
   const [reduce, dispach] = reducer;
+let notif = false;
 
   return (
     <div className="  h-full bg-white  relative ont-IrSans mt-16 max-w-2xl mx-auto">
@@ -89,10 +90,13 @@ const Acconut = () => {
                 ) {
                   dispach({ type: "User", payload: i });
                   dispach({ type: "Login" });
-                  navigate("/");
-                }
+                  navigate("/bill");
+                  notif=!notif
+                } 
               });
-              !reduce.Login && toast.error("رمز یا پسورد اشتباه است");
+              !notif
+                ? toast.error("رمز یا پسورد اشتباه است")
+                : toast.success(`خوش آمدید`);
             }}
           >
             ورود
