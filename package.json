@@ -21,6 +21,7 @@
     "react-multi-date-picker": "^4.5.2",
     "react-pdf": "^9.1.1",
     "react-router-dom": "^6.27.0",
+    "react-spinners": "^0.14.1",
     "react-uuid": "^2.0.0",
     "uuidv4": "^6.2.13"
   },

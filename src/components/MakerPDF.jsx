@@ -17,6 +17,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { reducerContext } from "../context/context";
 import { useNavigate } from "react-router-dom";
+import { BarLoader } from "react-spinners";
 
 const typeOfBillsDS = [
   { title: "پیش فاکتور", id: 1 },
@@ -47,6 +48,7 @@ const MakerPDF = () => {
   let sumNum = 0;
   let sumPay = 0;
   let sumOff = 0;
+  // let lodaer = false;
   const datTime = new Date();
   let time = {
     day: datTime.toLocaleDateString("fa-Ir"),
@@ -59,6 +61,8 @@ const MakerPDF = () => {
 
   const reducer = useContext(reducerContext);
   const [reduce, dispach] = reducer;
+
+  const [loadaer, setLoader] = useState(false);
 
   // useEffect(() => {
   //   if (!reduce.Login) {
@@ -179,8 +183,6 @@ const MakerPDF = () => {
     },
   ]);
 
-  console.log(products);
-
   const ref1 = useRef();
   const ref2 = useRef();
   const diabalBTN =
@@ -218,6 +220,7 @@ const MakerPDF = () => {
     }
   };
   const handelPDF2 = async () => {
+    setLoader((i) => !i);
     const input1 = ref1.current;
     const input2 = ref2.current;
 
@@ -247,10 +250,31 @@ const MakerPDF = () => {
     } catch (error) {
       console.log(error);
     }
+    setLoader((i) => !i);
   };
 
+  useEffect(() => {
+    console.log(loadaer);
+  }, [loadaer]);
   return (
     <>
+      <div
+        className={`${
+          !loadaer ? `hidden` : `fixed`
+        }   bg-black top-0 h-screen w-full bg-opacity-30  right-0 z-20 `}
+      >
+        <div className=" rounded-xl w-80 h-80 bg-white !bg-opacity-100 top-1/4 right-0 left-0 fixed z-40 mx-auto ">
+          <img src={Logo} alt="" className="mx-auto mt-16 " />
+          <h1 className=" mt-5 mx-auto w-fit">درحال ساخت PDF </h1>
+          <BarLoader
+            color="#0909A3"
+            width={180}
+            height={5}
+            className=" mt-20 mx-auto"
+          />
+        </div>
+      </div>
+
       <div
         className={`${
           calendar ? `hidden` : `fixed`
