@@ -2,12 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Calendar } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
-import {
-  IoIosArrowDown,
-  IoIosArrowUp,
-  IoIosCalendar,
-  IoMdClose,
-} from "react-icons/io";
+import { IoIosArrowDown, IoIosArrowUp, IoIosCalendar } from "react-icons/io";
 import { MdRadioButtonUnchecked } from "react-icons/md";
 import { BsCheck2Circle } from "react-icons/bs";
 import uuid from "react-uuid";
@@ -15,41 +10,18 @@ import Logo from "../assets/svg/LOGO.svg";
 import { numberToPersianWords, sp } from "../Functions/Fonctions";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { reducerContext } from "../context/context";
+import {
+  consumerDS,
+  reducerContext,
+  typeOfBillsDS,
+  typeOFSellDS,
+} from "../context/context";
 import { useNavigate } from "react-router-dom";
 import { BarLoader } from "react-spinners";
-import { FaCheck } from "react-icons/fa";
-
-const typeOfBillsDS = [
-  { title: "پیش فاکتور", id: 1 },
-  { title: "فاکتور فروش", id: 2 },
-];
-
-const typeOFSellDS = [
-  { title: "نقدی", id: 1 },
-  { title: "غیر نقدی", id: 2 },
-  { title: "سایت", id: 3 },
-  { title: "سر رسید ", id: 4 },
-];
-
-const consumerDS = [
-  {
-    title: "بیمارستان عشایر",
-    addres: "  لرستان - خرم آباد - خیابان انقلاب بیمارستان شهدای عشایر",
-    id: 14013528778,
-    tell: "06633236401",
-    nationalID: 14002438448,
-    economic: 411399958955,
-    addCode: 6816991451,
-  },
-];
+import Page from "./Page";
 
 const MakerPDF = () => {
   const newUuid = uuid();
-  let sumNum = 0;
-  let sumPay = 0;
-  let sumOff = 0;
-  // let lodaer = false;
   const datTime = new Date();
   let time = {
     day: datTime.toLocaleDateString("fa-Ir"),
@@ -103,16 +75,11 @@ const MakerPDF = () => {
     !!product?.unit &&
     !!product?.pay;
 
-  products?.map((i) => {
-    sumNum = Number(i?.number) + Number(sumNum);
-    sumOff = Number(i?.off) + Number(sumOff);
-    sumPay = Number(i?.number) * Number(i?.pay) + Number(sumPay);
-  });
-
   const handelPDF1 = async () => {
-    const input1 = ref1.current;
+    setLoader((i) => !i);
 
     try {
+      const input1 = ref1.current;
       const canvas = await html2canvas(input1, { scale: 1 });
       const imageData = canvas.toDataURL("image/png");
       const PDF = new jsPDF({
@@ -130,7 +97,9 @@ const MakerPDF = () => {
     } catch (error) {
       console.log(error);
     }
+    setLoader((i) => !i);
   };
+
   const handelPDF2 = async () => {
     setLoader((i) => !i);
     const input1 = ref1.current;
@@ -166,94 +135,63 @@ const MakerPDF = () => {
   };
 
   useEffect(() => {
-    console.log(loadaer);
-  }, [loadaer]);
+    !calendar && setCalendar((i) => !i);
+  }, [date?.CreationDate]);
+
+  useEffect(() => {
+    !sell && setSell((i) => !i);
+  }, [billDate?.dateOver]);
+
   return (
     <>
-      <div
-        className={`${
-          !loadaer ? `hidden` : `fixed`
-        }   bg-black top-0 h-screen w-full bg-opacity-30  right-0 z-20 `}
-      >
-        <div className=" rounded-xl w-80 h-80 bg-white !bg-opacity-100 top-1/4 right-0 left-0 fixed z-40 mx-auto ">
-          <img src={Logo} alt="" className="mx-auto mt-16 " />
-          <h1 className=" mt-5 mx-auto w-fit">درحال ساخت PDF </h1>
-          <BarLoader
-            color="#0909A3"
-            width={180}
-            height={5}
-            className=" mt-20 mx-auto"
-          />
+      {/* modal ============================================================== */}
+      <div>
+        <div
+          className={`${
+            !loadaer ? `hidden` : `fixed`
+          }   bg-black top-0 h-screen w-full bg-opacity-30  right-0 z-20 `}
+        >
+          <div className=" rounded-xl w-80 h-80 bg-white !bg-opacity-100 top-1/4 right-0 left-0 fixed z-40 mx-auto ">
+            <img src={Logo} alt="" className="mx-auto mt-16 " />
+            <h1 className=" mt-5 mx-auto w-fit">درحال ساخت PDF </h1>
+            <BarLoader
+              color="#0909A3"
+              width={180}
+              height={5}
+              className=" mt-20 mx-auto"
+            />
+          </div>
         </div>
-      </div>
-
-      <div
-        className={`${
-          calendar ? `hidden` : `fixed`
-        }   bg-black top-0 h-screen w-full opacity-30  right-0 z-20`}
-        onClick={() => {
-          !calendar && setCalendar((i) => !i);
-        }}
-      ></div>
-      <div
-        className={`${
-          sell ? `hidden` : `fixed`
-        }   bg-black top-0 h-screen w-full opacity-30  right-0 z-20`}
-        onClick={() => {
-          !sell && setSell((i) => !i);
-        }}
-      ></div>
-      <div
-        className={`${
-          Discription ? `hidden` : `fixed`
-        }   bg-black top-0 h-screen w-full opacity-30  right-0 z-20`}
-        onClick={() => {
-          !Discription && setDiscription((i) => !i);
-        }}
-      ></div>
-      <div className="  relative mx-2">
-        <Calendar
-          className={` p-5 border fixed right-0 left-0 mx-auto  top-1/4  rounded-[10px] ease-in-out  z-50 
+        <div
+          className={`${
+            calendar ? `hidden` : `fixed`
+          }   bg-black top-0 h-screen w-full opacity-30  right-0 z-20`}
+          onClick={() => {
+            !calendar && setCalendar((i) => !i);
+          }}
+        ></div>
+        <div
+          className={`${
+            sell ? `hidden` : `fixed`
+          }   bg-black top-0 h-screen w-full opacity-30  right-0 z-20`}
+          onClick={() => {
+            !sell && setSell((i) => !i);
+          }}
+        ></div>
+        <div
+          className={`${
+            Discription ? `hidden` : `fixed`
+          }   bg-black top-0 h-screen w-full opacity-30  right-0 z-20`}
+          onClick={() => {
+            !Discription && setDiscription((i) => !i);
+          }}
+        ></div>
+        <div className="  relative mx-2">
+          <Calendar
+            className={` p-5 border fixed right-0 left-0 mx-auto  top-1/4  rounded-[10px] ease-in-out  z-50 
                  ${calendar && `hidden `}
                  `}
-          value={date?.CreationDate}
-          id="expirDate"
-          name="expirDate"
-          calendar={persian}
-          locale={persian_fa}
-          // minDate={new Date()}
-          calendarPosition="bottom-right"
-          onChange={(date) => {
-            setDate({
-              CreationDate: `${date?.year}/${date?.month.number}/${date?.day}`,
-            });
-          }}
-        />
-      </div>
-      <div className="  relative mx-2 ">
-        <div
-          className={`bg-white  p-5 border fixed right-0 left-0 mx-auto  top-1/4 w-[600px]  rounded-[10px] ease-in-out  z-50 
-                 ${sell && `hidden `}
-                 `}
-        >
-          <p className="text-center">نحوه فروش را وارد کنید</p>
-          {typeOFSellDS?.map((i) => (
-            <div
-              key={i.id}
-              className="flex items-center gap-2"
-              onClick={() => setTypeOFSell(i)}
-            >
-              {i.id == typeOFSell?.id ? (
-                <BsCheck2Circle className="mt-1.5" />
-              ) : (
-                <MdRadioButtonUnchecked className="mt-1.5" />
-              )}
-              <h1>{i.title}</h1>
-            </div>
-          ))}
-          <Calendar
-            className={` p-5  mx-auto border-none rounded-[10px] `}
-            value={billDate?.dateOver}
+            value={date?.CreationDate}
             id="expirDate"
             name="expirDate"
             calendar={persian}
@@ -261,43 +199,83 @@ const MakerPDF = () => {
             // minDate={new Date()}
             calendarPosition="bottom-right"
             onChange={(date) => {
-              setBillDate(() => ({
-                dateOver: `${date?.year}/${date?.month.number}/${date?.day}`,
-              }));
+              setDate({
+                CreationDate: `${date?.year}/${date?.month.number}/${date?.day}`,
+              });
             }}
           />
-          <button
-            className="w-[calc(100%-20px)] mx-auto  h-12 bg-blue-500 block  mt-5 rounded-[10px] text-white "
-            onClick={() => {
-              setSell((i) => !i);
-            }}
-          >
-            ذخیره اطلاعات
-          </button>
         </div>
-      </div>
-      <div className="  relative mx-2 ">
-        <div
-          className={`bg-white  p-5 border fixed right-0 left-0 mx-auto  top-1/4 w-[600px]  rounded-[10px] ease-in-out  z-50 
+        <div className="  relative mx-2 ">
+          <div
+            className={`bg-white  p-5 border fixed right-0 left-0 mx-auto  top-1/4 w-[600px]  rounded-[10px] ease-in-out  z-50 
+                 ${sell && `hidden `}
+                 `}
+          >
+            <p className="text-center">نحوه فروش را وارد کنید</p>
+            {typeOFSellDS?.map((i) => (
+              <div
+                key={i.id}
+                className="flex items-center gap-2"
+                onClick={() => setTypeOFSell(i)}
+              >
+                {i.id == typeOFSell?.id ? (
+                  <BsCheck2Circle className="mt-1.5" />
+                ) : (
+                  <MdRadioButtonUnchecked className="mt-1.5" />
+                )}
+                <h1>{i.title}</h1>
+              </div>
+            ))}
+            {typeOFSell?.id == 4 && (
+              <Calendar
+                className={` p-5  mx-auto border-none rounded-[10px] `}
+                value={billDate?.dateOver}
+                id="expirDate"
+                name="expirDate"
+                calendar={persian}
+                locale={persian_fa}
+                calendarPosition="bottom-right"
+                onChange={(date) => {
+                  setBillDate(() => ({
+                    dateOver: `${date?.year}/${date?.month.number}/${date?.day}`,
+                  }));
+                }}
+              />
+            )}
+            <button
+              className="w-[calc(100%-20px)] mx-auto  h-12 bg-blue-500 block  mt-5 rounded-[10px] text-white "
+              onClick={() => {
+                setSell((i) => !i);
+              }}
+            >
+              ذخیره اطلاعات
+            </button>
+          </div>
+        </div>
+        <div className="  relative mx-2 ">
+          <div
+            className={`bg-white  p-5 border fixed right-0 left-0 mx-auto  top-1/4 w-[600px]  rounded-[10px] ease-in-out  z-50 
                 ${Discription && `hidden `}
                 `}
-        >
-          <p className="text-center">توضیحات را وارد کنید</p>
-          <textarea
-            className="w-full mx-auto min-h-40 px-5 border mt-10 rounded-[10px]"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          ></textarea>
-          <button
-            className="w-full mx-auto  h-12 bg-blue-500 block  mt-5 rounded-[10px] text-white "
-            onClick={() => {
-              setDiscription((i) => !i);
-            }}
           >
-            ذخیره اطلاعات
-          </button>
+            <p className="text-center">توضیحات را وارد کنید</p>
+            <textarea
+              className="w-full mx-auto min-h-40 px-5 border mt-10 rounded-[10px]"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            ></textarea>
+            <button
+              className="w-full mx-auto  h-12 bg-blue-500 block  mt-5 rounded-[10px] text-white "
+              onClick={() => {
+                setDiscription((i) => !i);
+              }}
+            >
+              ذخیره اطلاعات
+            </button>
+          </div>
         </div>
       </div>
+      {/* tools  ====================================================================== */}
       <div className=" max-w-7xl  min-w-[80rem]  mx-auto">
         <div className=" w-full     ">
           <div className="flex  justify-between  mx-auto  mt-4 text-center">
@@ -614,1113 +592,52 @@ const MakerPDF = () => {
         </div>
       </div>
       {/* =================================================================================================================================================== */}
-      {products.length > 6 ? (
+      {products.length > 12 ? (
         <>
-          <div
-            className="border-t my-5 max-w-7xl  min-w-[80rem] mx-auto px-5  "
-            ref={ref1}
-          >
-            <div className="flex items-center justify-between  mt-5 relative">
-              <div>
-                <div>
-                  شماره فاکتور : <span className="  ">{billNO}</span>
-                </div>
-                <div>
-                  تاریخ صدور :
-                  <span className=" pr-2">{date?.CreationDate}</span>
-                </div>
-                <div>صفحه2 از 1</div>
-              </div>
-              <div className=" absolute right-0 left-0 mx-auto w-fit ">
-                <h1 className="mx-auto w-fit font-bold mb-3 ">
-                  {!!typeOfBills?.title ? typeOfBills?.title : "فاکتور"}
-                </h1>
-                <p>شرکت تجهیزات پزشکی آرتا مهر درمان یار</p>
-              </div>
-              <img src={Logo} alt="" />
-            </div>
-
-            {/* header ==================================================================================================== */}
-
-            <div>
-              <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
-                <div className="border-t border-black w-24 h-5 absolute -right-9 top-5 text-center text-[12px]  -rotate-90 ">
-                  فروشنده
-                </div>
-                <div className="flex justify-between mx-9 my-1.5">
-                  <div className="text-sm ">
-                    <p className="mb-2">
-                      نام فروشنده : شرکت آرتا مهر درمان یار
-                    </p>
-                    <p>
-                      آدرس : لرستان - خرم آباد - شهرک صنعتی شماره یک - خیابان
-                      ابتکار 4
-                    </p>
-                  </div>
-                  <div className="text-sm ">
-                    <p className="mb-2">شماره کارت ملت : 6104338800754794</p>
-                    <p>شماره شبای ملت : IR 730120000000002292606004</p>
-                  </div>
-                  <div className="text-sm ">
-                    <p className="mb-2"> شناسه ملی : 14013528778</p>
-                    <p> تلفن : 09216919291 </p>
-                  </div>
-                  <div className="text-sm ">
-                    <p className="mb-2">کدپستی : 14013528778</p>
-                    <p>شماره اقتصادی : 092116919261 </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
-                <div className="border-t border-black w-24 h-5 absolute -right-9 top-5 text-center text-[12px]  -rotate-90 ">
-                  خریدار
-                </div>
-                <div className="flex justify-between mx-9 my-1.5 ">
-                  <div className="text-sm ">
-                    <p className="mb-2">
-                      نام فروشنده :
-                      <span className="">{dataConsumer?.title}</span>
-                    </p>
-                    <p>
-                      آدرس :<span className="">{dataConsumer?.addres}</span>
-                    </p>
-                  </div>
-
-                  <div className="text-sm ">
-                    <p className="mb-2">
-                      شناسه ملی :
-                      <span className="">{dataConsumer?.nationalID}</span>
-                    </p>
-                    <p>
-                      تلفن :<span className="">{dataConsumer?.tell}</span>
-                    </p>
-                  </div>
-                  <div className="text-sm ">
-                    <p className="mb-2">
-                      کدپستی :<span className="">{dataConsumer?.addCode}</span>
-                    </p>
-                    <p>
-                      شماره اقتصادی :
-                      <span className="">{dataConsumer?.economic}</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/*body======================================================================================================== */}
-            <div className="border border-black rounded-2xl overflow-hidden relative  mt-2">
-              <div className="flex justify-between  mt-2">
-                <div></div>
-                <div className="absolute m-auto right-0 left-0  w-fit">
-                  مشخصات کالا یا خدمات مورد معامله
-                </div>
-                <div className="ml-5"> مبالغ به ریال است</div>
-              </div>
-              <div className=" border-black  overflow-hidden relative  mt-2  ">
-                <div className="bg-[#f2f2f2]">
-                  <div className=" text-sm pt-[1px]  border-black w-10 h-12 absolute -right-5 -top-1 text-center   -rotate-90 ">
-                    ردیف
-                  </div>
-                  <div className="flex   border-y border-black border-opacity-50 h-10 ">
-                    <div className=" w-6  border-l text-center text-nowrap text-sm borde  py-2.5 border-black"></div>
-                    <div className=" w-36 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      IRC
-                    </div>
-                    <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      شرح کالا یا خدمات
-                    </div>
-                    <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      Lot NO
-                    </div>
-                    <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      مقدار
-                    </div>
-                    <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      واحد
-                    </div>
-                    <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      بهای واحد
-                    </div>
-                    <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      بهای کل
-                    </div>
-                    <div className=" w-24 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      تخفیف
-                    </div>
-                    <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
-                      قابل پرداخت
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  {!!products?.length > 0 ? (
-                    products.map(
-                      (i, index) =>
-                        index < 6 && (
-                          <div
-                            className={` ${
-                              index % 2 != 0 ? `bg-[#f2f2f2]` : ``
-                            }  relative`}
-                            key={index}
-                          >
-                            <div
-                              className=" text-sm  cursor-pointer  border-black w-6 h-10 absolute -right- -top- text-center    "
-                              onClick={() =>
-                                setProducts(
-                                  products.filter((item) => item.id != i.id)
-                                )
-                              }
-                            >
-                              <p className="pt-2.5">{index + 1}</p>
-                            </div>
-                            <div className="flex    border-b border-black border-opacity-50 h-8 ">
-                              <div className=" w-6   text-center text-nowrap text-sm border-l  py-2.5 border-black"></div>
-                              <div className=" w-36  text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.IRC}
-                              </div>
-                              <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.discription}
-                              </div>
-                              <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.LotNO}
-                              </div>
-                              <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.number}
-                              </div>
-                              <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.unit}
-                              </div>
-                              <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {sp(i?.pay)}
-                              </div>
-                              <div className=" w-32  text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {sp(i?.pay * i?.number)}
-                              </div>
-                              <div className=" w-24 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {sp(i?.off)}
-                              </div>
-                              <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
-                                {sp(i?.pay * i?.number - i?.off)}
-                              </div>
-                            </div>
-                            {!!i?.text && (
-                              <div className=" border-b border-black px-4 text-[14px] text-justify">
-                                {" "}
-                                توضیحات : {i?.text}
-                              </div>
-                            )}
-                          </div>
-                        )
-                    )
-                  ) : (
-                    <p className=" text-center border-b border-black py-2">
-                      محصولی برای ارائه وجود ندارد
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* fotter =========================================================================================================== */}
-            {/* <div className=" border border-black rounded-[10px] mt-2">
-              <div className="  ">
-                <div className="flex justify-between ">
-                  <span className="flex   gap-6 pt-2 pr-2">
-                    نحوه فروش :
-                    {typeOFSellDS.map((i, index) => (
-                      <span
-                        key={index}
-                        className={`${
-                          typeOFSell?.id == i?.id
-                            ? `text-black  font-bold`
-                            : `text-gray-500`
-                        }`}
-                      >
-                        {i.title}
-                      </span>
-                    ))}
-                    <p className="">{billDate?.dateOver}</p>
-                  </span>
-                  <div className="flex  ">
-                    <span className=" border-l border-black pt-1.5 pl-3">
-                      جمع فاکتور
-                    </span>
-                    <div className="   w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      {sp(sumNum)}
-                    </div>
-                    <div className="   w-[174px] text-center text-nowrap text-sm border-l py-2.5 border-black"></div>
-                    <div className="   w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      {sp(sumPay)}
-                    </div>
-                    <div className="    w-24 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      {sp(sumOff)}
-                    </div>
-                    <div className="    w-36 -mr-2.5 text-center text-nowrap text-sm   py-2.5 border-black">
-                      {sp(sumPay - sumOff)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-2 items-center   mt-2">
-              <div className="border rounded-2xl border-black w-1/2 h-32 flex justify-between px-5 py-2 text-gray-500">
-                <p>مهر وامضای خریدار</p>
-                <p>مهر و امضای فروشنده</p>
-              </div>
-              <div className="border flex rounded-2xl border-black w-1/2 h-32 text-gray-500">
-                <div className="w-5/12 border-l border-black h-full text-[12px] relative">
-                  <div className="pt-1 text-justify px-2 w-full ">
-                    توضیحات : <br />{" "}
-                    <span className="text-black w-11/12 ">{text}</span>
-                  </div>
-                  <div className="w-full absolute bottom-0 py-1 pr-2 border-t border-black">
-                    کاربر سیستم : {reduce?.User?.name} {time?.day}{" "}
-                    <span> </span>
-                    {time?.time}
-                  </div>
-                </div>
-                <div className="w-7/12 child:h-[41px] text-black text-sm">
-                  <div className=" flex justify-between px-2 items-center border-b border-black">
-                    <span> تخفیف:</span>
-                    <span className="">{sp(sumOff)} ریال </span>
-                  </div>
-                  <div className="flex justify-between px-2 items-center border-b border-black">
-                    <span> جمع کل:</span>
-                    <span className="">{sp(sumPay)} ریال </span>
-                  </div>
-                  <div className=" text-justify  px-2 items-center">
-                    <p className="inline"> جمع به حروف : </p>
-                    <p className=" inline">
-                      {numberToPersianWords(sumPay - sumOff)} ریال
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div> */}
-          </div>
-          {/* =-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-==-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-= */}
-          <div
-            className="border-t my-5 max-w-7xl  min-w-[80rem] mx-auto px-5  "
-            ref={ref2}
-          >
-            {/* ==================================================================================================== */}
-            <div className="flex items-center justify-between  mt-5 relative">
-              <div>
-                <div>
-                  شماره فاکتور : <span className="  ">{billNO}</span>
-                </div>
-                <div>
-                  تاریخ صدور :
-                  <span className=" pr-2">{date?.CreationDate}</span>
-                </div>
-                <div>صفحه 2 از 2</div>
-              </div>
-              <div className=" absolute right-0 left-0 mx-auto w-fit ">
-                <h1 className="mx-auto w-fit font-bold mb-3 ">
-                  {!!typeOfBills?.title ? typeOfBills?.title : "فاکتور"}
-                </h1>
-                <p>شرکت تجهیزات پزشکی آرتا مهر درمان یار</p>
-              </div>
-              <img src={Logo} alt="" />
-            </div>
-
-            <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
-              <div className="border-t border-black w-24 h-5 absolute -right-9 top-5 text-center text-[12px]  -rotate-90 ">
-                فروشنده
-              </div>
-              <div className="flex justify-between mx-9 my-1.5">
-                <div className="text-sm ">
-                  <p className="mb-2">نام فروشنده : شرکت آرتا مهر درمان یار</p>
-                  <p>
-                    آدرس : لرستان - خرم آباد - شهرک صنعتی شماره یک - خیابان
-                    ابتکار 4
-                  </p>
-                </div>
-                <div className="text-sm ">
-                  <p className="mb-2">شماره کارت ملت : 6104338800754794</p>
-                  <p>شماره شبای ملت : IR 730120000000002292606004</p>
-                </div>
-                <div className="text-sm ">
-                  <p className="mb-2"> شناسه ملی : 14013528778</p>
-                  <p> تلفن : 09216919291 </p>
-                </div>
-                <div className="text-sm ">
-                  <p className="mb-2">کدپستی : 14013528778</p>
-                  <p>شماره اقتصادی : 092116919261 </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
-              <div className="border-t border-black w-24 h-5 absolute -right-9 top-5 text-center text-[12px]  -rotate-90 ">
-                خریدار
-              </div>
-              <div className="flex justify-between mx-9 my-1.5 ">
-                <div className="text-sm ">
-                  <p className="mb-2">
-                    نام فروشنده :<span className="">{dataConsumer?.title}</span>
-                  </p>
-                  <p>
-                    آدرس :<span className="">{dataConsumer?.addres}</span>
-                  </p>
-                </div>
-
-                <div className="text-sm ">
-                  <p className="mb-2">
-                    شناسه ملی :
-                    <span className="">{dataConsumer?.nationalID}</span>
-                  </p>
-                  <p>
-                    تلفن :<span className="">{dataConsumer?.tell}</span>
-                  </p>
-                </div>
-                <div className="text-sm ">
-                  <p className="mb-2">
-                    کدپستی :<span className="">{dataConsumer?.addCode}</span>
-                  </p>
-                  <p>
-                    شماره اقتصادی :
-                    <span className="">{dataConsumer?.economic}</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            {/*qqqqqqqqqqqqqqqqqqqqqqqqqqqqq======================================================================================================== */}
-            <div className="border border-black rounded-2xl overflow-hidden relative  mt-2">
-              <div className="flex justify-between  mt-2">
-                <div></div>
-                <div className="absolute m-auto right-0 left-0  w-fit">
-                  مشخصات کالا یا خدمات مورد معامله
-                </div>
-                <div className="ml-5"> مبالغ به ریال است</div>
-              </div>
-              <div className=" border-black  overflow-hidden relative  mt-2  ">
-                <div className="bg-[#f2f2f2]">
-                  <div className=" text-sm pt-[1px]  border-black w-10 h-12 absolute -right-5 -top-1 text-center   -rotate-90 ">
-                    ردیف
-                  </div>
-                  <div className="flex   border-y border-black border-opacity-50 h-10 ">
-                    <div className=" w-6  border-l text-center text-nowrap text-sm borde  py-2.5 border-black"></div>
-                    <div className=" w-36 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      IRC
-                    </div>
-                    <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      شرح کالا یا خدمات
-                    </div>
-                    <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      Lot NO
-                    </div>
-                    <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      مقدار
-                    </div>
-                    <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      واحد
-                    </div>
-                    <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      بهای واحد
-                    </div>
-                    <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      بهای کل
-                    </div>
-                    <div className=" w-24 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      تخفیف
-                    </div>
-                    <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
-                      قابل پرداخت
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  {!!products?.length > 0 ? (
-                    products.map(
-                      (i, index) =>
-                        index >= 6 && (
-                          <div
-                            className={` ${
-                              index % 2 != 0 ? `bg-[#f2f2f2]` : ``
-                            } relative`}
-                            key={index}
-                          >
-                            <div
-                              className=" text-sm    border-black w-6 h-10 absolute -right- -top- text-center    "
-                              onClick={() =>
-                                setProducts(
-                                  products.filter((item) => item.id != i.id)
-                                )
-                              }
-                            >
-                              <p className="pt-2.5">{index + 1}</p>
-                            </div>
-                            <div className="flex    border-b border-black border-opacity-50 h-10 ">
-                              <div className=" w-6   text-center text-nowrap text-sm border-l  py-2.5 border-black"></div>
-                              <div className=" w-36  text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.IRC}
-                              </div>
-                              <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.discription}
-                              </div>
-                              <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.LotNO}
-                              </div>
-                              <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.number}
-                              </div>
-                              <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {i?.unit}
-                              </div>
-                              <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {sp(i?.pay)}
-                              </div>
-                              <div className=" w-32  text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {sp(i?.pay * i?.number)}
-                              </div>
-                              <div className=" w-24 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                                {sp(i?.off)}
-                              </div>
-                              <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
-                                {sp(i?.pay * i?.number - i?.off)}
-                              </div>
-                            </div>
-                            {!!i?.text && (
-                              <div className=" border-b border-black px-4 text-justify">
-                                {" "}
-                                توضیحات : {i?.text}
-                              </div>
-                            )}
-                          </div>
-                        )
-                    )
-                  ) : (
-                    <p className=" text-center border-b border-black py-2">
-                      محصولی برای ارائه وجود ندارد
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* =========================================================================================================== */}
-            <div className=" border border-black rounded-[10px] mt-2">
-              <div className="  ">
-                <div className="flex justify-between ">
-                  <span className="flex   gap-6  pr-2 relative">
-                    <span className="mt-2">نحوه فروش :</span>{" "}
-                    {typeOFSellDS.map((i, index) => (
-                      <span
-                        key={index}
-                        className={`${
-                          typeOFSell?.id == i?.id
-                            ? `text-black  font-bold`
-                            : `text-gray-500`
-                        } flex  items-center gap-2`}
-                      >
-                        {typeOFSell?.id == i?.id && <FaCheck />}
-                        {i.title}
-                      </span>
-                    ))}
-                    <p className=" absolute -left-[72px] ">
-                      {billDate?.dateOver}
-                    </p>
-                  </span>
-                  <div className="flex  ">
-                    <span className=" border-l border-black pt-1.5 pl-3">
-                      جمع فاکتور
-                    </span>
-                    <div className="   w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      {sp(sumNum)}
-                    </div>
-                    <div className="   w-[174px] text-center text-nowrap text-sm border-l py-2.5 border-black"></div>
-                    <div className="   w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      {sp(sumPay)}
-                    </div>
-                    <div className="    w-24 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                      {sp(sumOff)}
-                    </div>
-                    <div className="    w-36 -mr-2.5 text-center text-nowrap text-sm   py-2.5 border-black">
-                      {sp(sumPay - sumOff)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-2 items-center   mt-2">
-              <div className="border rounded-2xl border-black w-1/2 h-32 flex justify-between px-5 py-2 text-gray-500">
-                <p>مهر وامضای خریدار</p>
-                <p>مهر و امضای فروشنده</p>
-              </div>
-              <div className="border flex rounded-2xl border-black w-1/2 h-32 text-gray-500">
-                <div className="w-5/12 border-l border-black h-full text-[12px] relative">
-                  <div className="pt-1 text-justify px-2 w-full ">
-                    توضیحات : <br />{" "}
-                    <span className="text-black w-11/12 ">{text}</span>
-                  </div>
-                  <div className="w-full absolute bottom-0 py-1 pr-2 border-t border-black">
-                    کاربر سیستم : {reduce?.User?.name} {time?.day}{" "}
-                    <span> </span>
-                    {time?.time}
-                  </div>
-                </div>
-                <div className="w-7/12 child:h-[41px] text-black text-sm">
-                  <div className=" flex justify-between px-2 items-center border-b border-black">
-                    <span> تخفیف:</span>
-                    <span className="">{sp(sumOff)} ریال </span>
-                  </div>
-                  <div className="flex justify-between px-2 items-center border-b border-black">
-                    <span> جمع کل:</span>
-                    <span className="">{sp(sumPay)} ریال </span>
-                  </div>
-                  <div className=" text-justify  px-2 items-center">
-                    <p className="inline"> جمع به حروف : </p>
-                    <p className=" inline">
-                      {numberToPersianWords(sumPay - sumOff)} ریال
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Page
+            useRef={ref1}
+            billNO={billNO}
+            CreationDate={date?.CreationDate}
+            typeOfBills={typeOfBills}
+            dataConsumer={dataConsumer}
+            products={products}
+            billDate={billDate}
+            typeOFSell={typeOFSell}
+            text={text}
+            setProducts={setProducts}
+            numberToPersianWords={numberToPersianWords}
+            page1={1}
+          />
+          <Page
+            useRef={ref2}
+            billNO={billNO}
+            CreationDate={date?.CreationDate}
+            typeOfBills={typeOfBills}
+            dataConsumer={dataConsumer}
+            products={products}
+            billDate={billDate}
+            typeOFSell={typeOFSell}
+            text={text}
+            setProducts={setProducts}
+            numberToPersianWords={numberToPersianWords}
+            page2={2}
+          />
         </>
       ) : (
-        <div
-          className="border-t my-5 max-w-7xl  min-w-[80rem] mx-auto px-5  "
-          ref={ref1}
-        >
-          <div className="flex items-center justify-between  mt-5 relative">
-            <div>
-              <div>
-                شماره فاکتور : <span className="  ">{billNO}</span>
-              </div>
-              <div>
-                تاریخ صدور :<span className=" pr-2">{date?.CreationDate}</span>
-              </div>
-              <div>صفحه 1 از 1</div>
-            </div>
-            <div className=" absolute right-0 left-0 mx-auto w-fit ">
-              <h1 className="mx-auto w-fit font-bold mb-3 ">
-                {!!typeOfBills?.title ? typeOfBills?.title : "فاکتور"}
-              </h1>
-              <p>شرکت تجهیزات پزشکی آرتا مهر درمان یار</p>
-            </div>
-            <img src={Logo} alt="" />
-          </div>
-
-          {/* header ==================================================================================================== */}
-
-          <div>
-            <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
-              <div className="border-t border-black w-24 h-5 absolute -right-9 top-5 text-center text-[12px]  -rotate-90 ">
-                فروشنده
-              </div>
-              <div className="flex justify-between mx-9 my-1.5">
-                <div className="text-sm ">
-                  <p className="mb-2">نام فروشنده : شرکت آرتا مهر درمان یار</p>
-                  <p>
-                    آدرس : لرستان - خرم آباد - شهرک صنعتی شماره یک - خیابان
-                    ابتکار 4
-                  </p>
-                </div>
-                <div className="text-sm ">
-                  <p className="mb-2">شماره کارت ملت : 6104338800754794</p>
-                  <p>شماره شبای ملت : IR 730120000000002292606004</p>
-                </div>
-                <div className="text-sm ">
-                  <p className="mb-2"> شناسه ملی : 14013528778</p>
-                  <p> تلفن : 09216919291 </p>
-                </div>
-                <div className="text-sm ">
-                  <p className="mb-2">کدپستی : 14013528778</p>
-                  <p>شماره اقتصادی : 092116919261 </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
-              <div className="border-t border-black w-24 h-5 absolute -right-9 top-5 text-center text-[12px]  -rotate-90 ">
-                خریدار
-              </div>
-              <div className="flex justify-between mx-9 my-1.5 ">
-                <div className="text-sm ">
-                  <p className="mb-2">
-                    نام فروشنده :<span className="">{dataConsumer?.title}</span>
-                  </p>
-                  <p>
-                    آدرس :<span className="">{dataConsumer?.addres}</span>
-                  </p>
-                </div>
-
-                <div className="text-sm ">
-                  <p className="mb-2">
-                    شناسه ملی :
-                    <span className="">{dataConsumer?.nationalID}</span>
-                  </p>
-                  <p>
-                    تلفن :<span className="">{dataConsumer?.tell}</span>
-                  </p>
-                </div>
-                <div className="text-sm ">
-                  <p className="mb-2">
-                    کدپستی :<span className="">{dataConsumer?.addCode}</span>
-                  </p>
-                  <p>
-                    شماره اقتصادی :
-                    <span className="">{dataConsumer?.economic}</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/*body ======================================================================================================== */}
-          <div className="border border-black rounded-2xl overflow-hidden relative  mt-2">
-            <div className="flex justify-between  mt-2">
-              <div></div>
-              <div className="absolute m-auto right-0 left-0  w-fit">
-                مشخصات کالا یا خدمات مورد معامله
-              </div>
-              <div className="ml-5"> مبالغ به ریال است</div>
-            </div>
-            <div className=" border-black  overflow-hidden relative  mt-2  ">
-              <div className="bg-[#f2f2f2]">
-                <div className=" text-sm pt-[1px]  border-black w-10 h-12 absolute -right-5 -top-1 text-center   -rotate-90 ">
-                  ردیف
-                </div>
-                <div className="flex   border-y border-black border-opacity-50 h-10 ">
-                  <div className=" w-6  border-l text-center text-nowrap text-sm borde  py-2.5 border-black"></div>
-                  <div className=" w-36 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    IRC
-                  </div>
-                  <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    شرح کالا یا خدمات
-                  </div>
-                  <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    Lot NO
-                  </div>
-                  <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    مقدار
-                  </div>
-                  <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    واحد
-                  </div>
-                  <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    بهای واحد
-                  </div>
-                  <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    بهای کل
-                  </div>
-                  <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    تخفیف
-                  </div>
-                  <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
-                    قابل پرداخت
-                  </div>
-                </div>
-              </div>
-              <div>
-                {!!products?.length > 0 ? (
-                  products.map((i, index) => (
-                    <div
-                      className={` ${
-                        index % 2 != 0 ? `bg-[#f2f2f2]` : ``
-                      } relative`}
-                      key={index}
-                    >
-                      <div
-                        className=" text-sm  h-full  border-black w-6  absolute -right- -top- text-center    "
-                        onClick={() =>
-                          setProducts(
-                            products.filter((item) => item.id != i.id)
-                          )
-                        }
-                      >
-                        <p className="pt-2.5 h-full">{index + 1}</p>
-                      </div>
-                      <div className="flex    border-b border-black border-opacity-50 h-10 ">
-                        <div className=" w-6   text-center text-nowrap text-sm border-l  py-2.5 border-black"></div>
-                        <div className=" w-36  text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                          {i?.IRC}
-                        </div>
-                        <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                          {i?.discription}
-                        </div>
-                        <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                          {i?.LotNO}
-                        </div>
-                        <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                          {i?.number}
-                        </div>
-                        <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                          {i?.unit}
-                        </div>
-                        <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                          {sp(i?.pay)}
-                        </div>
-                        <div className=" w-32  text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                          {sp(i?.pay * i?.number)}
-                        </div>
-                        <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                          {sp(i?.off)}
-                        </div>
-                        <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
-                          {sp(i?.pay * i?.number - i?.off)}
-                        </div>
-                      </div>
-                      {!!i?.text && (
-                        <div className="border-b border-black px-7 text-justify">
-                          {" "}
-                          توضیحات : {i?.text}
-                        </div>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <p className=" text-center border-b border-black py-2">
-                    محصولی برای ارائه وجود ندارد
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* foter =========================================================================================================== */}
-          <div className=" border border-black rounded-[10px] mt-2">
-            <div className="  ">
-              <div className="flex justify-between ">
-                <span className="flex   gap-6 pt-2 pr-2">
-                  نحوه فروش :
-                  {typeOFSellDS.map((i, index) => (
-                    <span
-                      key={index}
-                      className={`${
-                        typeOFSell?.id == i?.id
-                          ? `text-black  font-bold`
-                          : `text-gray-500`
-                      }`}
-                    >
-                      {i.title}
-                    </span>
-                  ))}
-                  <p className="">{billDate?.dateOver}</p>
-                </span>
-                <div className="flex  ">
-                  <span className=" border-l border-black pt-1.5 pl-3">
-                    جمع فاکتور
-                  </span>
-                  <div className="   w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    {sp(sumNum)}
-                  </div>
-                  <div className="   w-[174px] text-center text-nowrap text-sm border-l py-2.5 border-black"></div>
-                  <div className="   w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    {sp(sumPay)}
-                  </div>
-                  <div className="    w-24 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    {sp(sumOff)}
-                  </div>
-                  <div className="    w-36 -mr-2.5 text-center text-nowrap text-sm   py-2.5 border-black">
-                    {sp(sumPay - sumOff)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-2 items-center   mt-2">
-            <div className="border rounded-2xl border-black w-1/2 h-32 flex justify-between px-5 py-2 text-gray-500">
-              <p>مهر وامضای خریدار</p>
-              <p>مهر و امضای فروشنده</p>
-            </div>
-            <div className="border flex rounded-2xl border-black w-1/2 h-32 text-gray-500">
-              <div className="w-5/12 border-l border-black h-full text-[12px] relative">
-                <div className="pt-1 text-justify px-2 w-full ">
-                  توضیحات : <br />{" "}
-                  <span className="text-black w-11/12 ">{text}</span>
-                </div>
-                <div className="w-full absolute bottom-0 py-1 pr-2 border-t border-black">
-                  کاربر سیستم : {reduce?.User?.name} {time?.day} <span> </span>
-                  {time?.time}
-                </div>
-              </div>
-              <div className="w-7/12 child:h-[41px] text-black text-sm">
-                <div className=" flex justify-between px-2 items-center border-b border-black">
-                  <span> تخفیف:</span>
-                  <span className="">{sp(sumOff)} ریال </span>
-                </div>
-                <div className="flex justify-between px-2 items-center border-b border-black">
-                  <span> جمع کل:</span>
-                  <span className="">{sp(sumPay)} ریال </span>
-                </div>
-                <div className=" text-justify  px-2 items-center">
-                  <p className="inline"> جمع به حروف : </p>
-                  <p className=" inline">
-                    {numberToPersianWords(sumPay - sumOff)} ریال
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Page
+          useRef={ref1}
+          billNO={billNO}
+          CreationDate={date?.CreationDate}
+          typeOfBills={typeOfBills}
+          dataConsumer={dataConsumer}
+          products={products}
+          billDate={billDate}
+          typeOFSell={typeOFSell}
+          text={text}
+          setProducts={setProducts}
+          numberToPersianWords={numberToPersianWords}
+        />
       )}
-
-      {/* 
-      <div
-        className="border-t my-5 max-w-7xl  min-w-[80rem] mx-auto px-5  "
-        ref={ref1}
-      >
-        <div className="flex items-center justify-between  mt-5 relative">
-          <div>
-            <div>
-              شماره فاکتور : <span className="  ">{billNO}</span>
-            </div>
-            <div>
-              تاریخ صدور :<span className=" pr-2">{date?.CreationDate}</span>
-            </div>
-            <div>صفحه 1 از 1</div>
-          </div>
-          <div className=" absolute right-0 left-0 mx-auto w-fit ">
-            <h1 className="mx-auto w-fit font-bold mb-3 ">
-              {!!typeOfBills?.title ? typeOfBills?.title : "فاکتور"}
-            </h1>
-            <p>شرکت تجهیزات پزشکی آرتا مهر درمان یار</p>
-          </div>
-          <img src={Logo} alt="" />
-        </div>
-
-
-        <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
-          <div className="border-t border-black w-24 h-5 absolute -right-9 top-5 text-center text-[12px]  -rotate-90 ">
-            فروشنده
-          </div>
-          <div className="flex justify-between mx-9 my-1.5">
-            <div className="text-sm ">
-              <p className="mb-2">نام فروشنده : شرکت آرتا مهر درمان یار</p>
-              <p>
-                آدرس : لرستان - خرم آباد - شهرک صنعتی شماره یک - خیابان ابتکار 4
-              </p>
-            </div>
-            <div className="text-sm ">
-              <p className="mb-2">شماره کارت ملت : 6104338800754794</p>
-              <p>شماره شبای ملت : IR 730120000000002292606004</p>
-            </div>
-            <div className="text-sm ">
-              <p className="mb-2"> شناسه ملی : 14013528778</p>
-              <p> تلفن : 09216919291 </p>
-            </div>
-            <div className="text-sm ">
-              <p className="mb-2">کدپستی : 14013528778</p>
-              <p>شماره اقتصادی : 092116919261 </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="border border-black rounded-2xl overflow-hidden relative h-16 mt-2">
-          <div className="border-t border-black w-24 h-5 absolute -right-9 top-5 text-center text-[12px]  -rotate-90 ">
-            خریدار
-          </div>
-          <div className="flex justify-between mx-9 my-1.5 ">
-            <div className="text-sm ">
-              <p className="mb-2">
-                نام فروشنده :<span className="">{dataConsumer?.title}</span>
-              </p>
-              <p>
-                آدرس :<span className="">{dataConsumer?.addres}</span>
-              </p>
-            </div>
-
-            <div className="text-sm ">
-              <p className="mb-2">
-                شناسه ملی :<span className="">{dataConsumer?.nationalID}</span>
-              </p>
-              <p>
-                تلفن :<span className="">{dataConsumer?.tell}</span>
-              </p>
-            </div>
-            <div className="text-sm ">
-              <p className="mb-2">
-                کدپستی :<span className="">{dataConsumer?.addCode}</span>
-              </p>
-              <p>
-                شماره اقتصادی :
-                <span className="">{dataConsumer?.economic}</span>
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="border border-black rounded-2xl overflow-hidden relative  mt-2">
-          <div className="flex justify-between  mt-2">
-            <div></div>
-            <div className="absolute m-auto right-0 left-0  w-fit">
-              مشخصات کالا یا خدمات مورد معامله
-            </div>
-            <div className="ml-5"> مبالغ به ریال است</div>
-          </div>
-          <div className=" border-black  overflow-hidden relative  mt-2  ">
-            <div className="bg-[#f2f2f2]">
-              <div className=" text-sm pt-[1px]  border-black w-10 h-12 absolute -right-5 -top-1 text-center   -rotate-90 ">
-                ردیف
-              </div>
-              <div className="flex   border-y border-black border-opacity-50 h-10 ">
-                <div className=" w-6  border-l text-center text-nowrap text-sm borde  py-2.5 border-black"></div>
-                <div className=" w-44 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                  IRC
-                </div>
-                <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                  شرح کالا یا خدمات
-                </div>
-                <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                  Lot NO
-                </div>
-                <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                  مقدار
-                </div>
-                <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                  واحد
-                </div>
-                <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                  بهای واحد
-                </div>
-                <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                  بهای کل
-                </div>
-                <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                  تخفیف
-                </div>
-                <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
-                  قابل پرداخت
-                </div>
-              </div>
-            </div>
-            <div>
-              {!!products?.length > 0 ? (
-                products.map((i, index) => (
-                  <div
-                    className={` ${
-                      index % 2 != 0 ? `bg-[#f2f2f2]` : ``
-                    } relative`}
-                    key={index}
-                  >
-                    <div
-                      className=" text-sm    border-black w-6 h-10 absolute -right- -top- text-center    "
-                      onClick={() =>
-                        setProducts(products.filter((item) => item.id != i.id))
-                      }
-                    >
-                      <p className="pt-2.5">{index + 1}</p>
-                    </div>
-                    <div className="flex    border-b border-black border-opacity-50 h-10 ">
-                      <div className=" w-6   text-center text-nowrap text-sm border-l  py-2.5 border-black"></div>
-                      <div className=" w-44  text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                        {i?.IRC}
-                      </div>
-                      <div className=" w-96 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                        {i?.discription}
-                      </div>
-                      <div className=" w-32 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                        {i?.LotNO}
-                      </div>
-                      <div className=" w-14 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                        {i?.number}
-                      </div>
-                      <div className=" w-16 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                        {i?.unit}
-                      </div>
-                      <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                        {sp(i?.pay)}
-                      </div>
-                      <div className=" w-32  text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                        {sp(i?.pay * i?.number)}
-                      </div>
-                      <div className=" w-28 text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                        {sp(i?.off)}
-                      </div>
-                      <div className=" w-36 text-center text-nowrap text-sm   py-2.5 border-black">
-                        {sp(i?.pay * i?.number - i?.off)}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className=" text-center border-b border-black py-2">
-                  محصولی برای ارائه وجود ندارد
-                </p>
-              )}
-            </div>
-            <div className="  ">
-              <div className="flex justify-between ">
-                <span className="flex   gap-6 pt-2 pr-2">
-                  نحوه فروش :
-                  {typeOFSellDS.map((i, index) => (
-                    <span
-                      key={index}
-                      className={`${
-                        typeOFSell?.id == i?.id
-                          ? `text-black  font-bold`
-                          : `text-gray-500`
-                      }`}
-                    >
-                      {i.title}
-                    </span>
-                  ))}
-                  <p className="">{billDate?.dateOver}</p>
-                </span>
-                <div className="flex  ">
-                  <span className=" border-l border-black pt-1.5 pl-3">
-                    جمع فاکتور
-                  </span>
-                  <div className="   w-[52px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    {sp(sumNum)}
-                  </div>
-                  <div className="   w-[164px] text-center text-nowrap text-sm border-l py-2.5 border-black"></div>
-                  <div className="   w-[119px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    {sp(sumPay)}
-                  </div>
-                  <div className="    w-[105px] text-center text-nowrap text-sm border-l  py-2.5 border-black">
-                    {sumOff}
-                  </div>
-                  <div className="    w-36 -mr-2.5 text-center text-nowrap text-sm   py-2.5 border-black">
-                    {sp(sumPay - sumOff)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex gap-2 items-center   mt-2">
-          <div className="border rounded-2xl border-black w-1/2 h-32 flex justify-between px-5 py-2 text-gray-500">
-            <p>مهر وامضای خریدار</p>
-            <p>مهر و امضای فروشنده</p>
-          </div>
-          <div className="border flex rounded-2xl border-black w-1/2 h-32 text-gray-500">
-            <div className="w-5/12 border-l border-black h-full text-[12px] relative">
-              <div className="pt-1 text-justify px-2 w-full ">
-                توضیحات : <br />{" "}
-                <span className="text-black w-11/12 ">{text}</span>
-              </div>
-              <div className="w-full absolute bottom-0 py-1 pr-2 border-t border-black">
-                کاربر سیستم : {reduce?.User?.name} {time?.day} <span> </span>
-                {time?.time}
-              </div>
-            </div>
-            <div className="w-7/12 child:h-[41px] text-black text-sm">
-              <div className=" flex justify-between px-2 items-center border-b border-black">
-                <span> تخفیف:</span>
-                <span className="">{sp(sumOff)}</span>
-              </div>
-              <div className="flex justify-between px-2 items-center border-b border-black">
-                <span> جمع کل:</span>
-                <span className="">{sp(sumPay)}</span>
-              </div>
-              <div className=" text-justify  px-2 items-center">
-                <p className="inline"> جمع به حروف : </p>
-                <p className=" inline">
-                  {numberToPersianWords(sumPay - sumOff)} ریال
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </>
   );
 };
