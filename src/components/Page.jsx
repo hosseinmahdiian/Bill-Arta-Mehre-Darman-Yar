@@ -220,7 +220,7 @@ const Page = ({
               {!!products?.length > 0 ? (
                 products.map(
                   (i, index) =>
-                    (page2 == 2 ? index >= 12 : index < 12) && (
+                    (page2 == 2 ? index >= 10 : index < 10) && (
                       <div
                         className={` ${
                           index % 2 != 0 ? `bg-[#f2f2f2]` : ``
@@ -422,8 +422,8 @@ const Page = ({
       </div>
       {/* ****************************************************************************************************************------------------------ */}
       <div
-        ref={useRef }
-        className={`border-t my-5 max-w-7xl  min-w-[80rem] mx-auto px-5 absolute right-[1000000px]
+        ref={useRef}
+        className={`border-t my-5 max-w-7xl  min-w-[80rem] mx-auto px-5 absolute right-[10000px]
             ${loadaer && `!pb-3`}  
         `}
       >
@@ -640,7 +640,7 @@ const Page = ({
               {!!products?.length > 0 ? (
                 products.map(
                   (i, index) =>
-                    (page2 == 2 ? index >= 12 : index < 12) && (
+                    (page2 == 2 ? index >= 10 : index < 10) && (
                       <div
                         className={` ${
                           index % 2 != 0 ? `bg-[#f2f2f2]` : ``

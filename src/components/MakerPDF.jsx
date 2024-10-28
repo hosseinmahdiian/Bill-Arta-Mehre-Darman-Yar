@@ -78,10 +78,10 @@ const MakerPDF = () => {
   const handelPDF1 = async () => {
     setLoader((i) => !i);
 
+    const input1 = ref1.current;
     try {
-      const input1 = ref1.current;
-      const canvas = await html2canvas(input1, { scale: 1 });
-      const imageData = canvas.toDataURL("image/png");
+      const canvas1 = await html2canvas(input1);
+      const imageData1 = canvas1.toDataURL("image/png");
       const PDF = new jsPDF({
         orientation: "landscape",
         unit: "px",
@@ -89,10 +89,10 @@ const MakerPDF = () => {
         compress: true,
       });
 
-      const width = PDF.internal.pageSize.getWidth();
-      const heigth = (canvas.height * width) / canvas.width;
+      const width1 = PDF.internal.pageSize.getWidth();
+      const heigth1 = (canvas1.height * width1) / canvas1.width;
 
-      PDF.addImage(imageData, "PNG", 0, 0, width, heigth);
+      PDF.addImage(imageData1, "PNG", 0, 0, width1, heigth1);
       PDF.save(`${billNO}.pdf`);
     } catch (error) {
       console.log(error);
@@ -113,7 +113,7 @@ const MakerPDF = () => {
         compress: true,
       });
 
-      const canvas1 = await html2canvas(input1, { scale: 1 });
+      const canvas1 = await html2canvas(input1);
       const imageData1 = canvas1.toDataURL("image/png");
       const width1 = PDF.internal.pageSize.getWidth();
       const heigth1 = (canvas1.height * width1) / canvas1.width;
@@ -121,7 +121,7 @@ const MakerPDF = () => {
 
       PDF.addPage();
 
-      const canvas2 = await html2canvas(input2, { scale: 1 });
+      const canvas2 = await html2canvas(input2);
       const imageData2 = canvas2.toDataURL("image/png");
       const width2 = PDF.internal.pageSize.getWidth();
       const heigth2 = (canvas2.height * width2) / canvas2.width;
@@ -383,7 +383,7 @@ const MakerPDF = () => {
             <div
               className="border w-40 cursor-pointer border-black px-4 pt-0.5 rounded-[10px]"
               onClick={() =>
-                products?.length > 5 ? handelPDF2() : handelPDF1()
+                products?.length > 10 ? handelPDF2() : handelPDF1()
               }
             >
               خروجی PDF
@@ -592,7 +592,7 @@ const MakerPDF = () => {
         </div>
       </div>
       {/* =================================================================================================================================================== */}
-      {products.length > 12 ? (
+      {products.length > 10 ? (
         <>
           <Page
             useRef={ref1}
