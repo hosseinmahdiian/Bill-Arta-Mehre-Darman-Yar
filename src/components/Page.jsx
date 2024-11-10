@@ -117,7 +117,7 @@ const Page = ({
             <div className={`flex justify-between mx-9 my-1.5 `}>
               <div className={`text-sm `}>
                 <p className={`mb-2`}>
-                  نام فروشنده :<span className={``}>{dataConsumer?.title}</span>
+                  نام خریدار :<span className={``}>{dataConsumer?.title}</span>
                 </p>
                 <p>
                   آدرس :<span className={``}>{dataConsumer?.addres}</span>
@@ -472,7 +472,7 @@ const Page = ({
             <div className={`flex justify-between mx-9 my-1.5 `}>
               <div className={`text-sm   `}>
                 <p
-                  className={`${loadaer ? `-m-2  pb-2` : `mb-2`}  
+                  className={`${loadaer ? `-my-2  pb-2` : `mb-2`}  
  `}
                 >
                   نام فروشنده : شرکت آرتا مهر درمان یار
@@ -483,19 +483,19 @@ const Page = ({
                 </p>
               </div>
               <div className={`text-sm `}>
-                <p className={`${loadaer ? `-m-2  pb-2.5` : `mb-2`}`}>
+                <p className={`${loadaer ? `-my-2  pb-2.5` : `mb-2`}`}>
                   شماره کارت ملت : 6104338800754794
                 </p>
                 <p>شماره شبای ملت : IR 730120000000002292606004</p>
               </div>
               <div className={`text-sm `}>
-                <p className={`${loadaer ? `-m-2  pb-2.5` : `mb-2`}`}>
+                <p className={`${loadaer ? `-my-2  pb-2.5` : `mb-2`}`}>
                   شناسه ملی : 14013528778
                 </p>
                 <p> تلفن : 09216919291 </p>
               </div>
               <div className={`text-sm `}>
-                <p className={`${loadaer ? `-m-2  pb-2.5` : `mb-2`}`}>
+                <p className={`${loadaer ? `-my-2  pb-2.5` : `mb-2`}`}>
                   کدپستی : 14013528778
                 </p>
                 <p>شماره اقتصادی : 092116919261 </p>
@@ -522,8 +522,8 @@ const Page = ({
             </div>
             <div className={`flex justify-between mx-9 my-1.5 `}>
               <div className={`text-sm `}>
-                <p className={`${loadaer ? `-m-2  pb-2.5` : `mb-2`}`}>
-                  نام فروشنده :<span className={``}>{dataConsumer?.title}</span>
+                <p className={`${loadaer ? `-my-2  pb-2.5` : `mb-2`}`}>
+                  نام خریدار :<span className={``}>{dataConsumer?.title}</span>
                 </p>
                 <p>
                   آدرس :<span className={``}>{dataConsumer?.addres}</span>
@@ -755,16 +755,13 @@ const Page = ({
                       <span
                         key={index}
                         className={`
-                        flex  gap-2 ${
+                        flex  gap-4 relative  ${
                           typeOFSell?.id == i?.id
                             ? `text-black  font-bold`
                             : `text-gray-500`
                         }`}
                       >
-                        {typeOFSell?.id == i?.id && (
-                          <FaCheck className={`mt-1`} />
-                        )}
-                        {i.title}
+                        <p className="text-nowrap"> {i.title}</p>{" "}
                       </span>
                     ))}
                     {typeOFSell?.id == 4 && (
@@ -773,12 +770,7 @@ const Page = ({
                       </p>
                     )}
                   </span>
-                  <div
-                    className={`flex
-                                      
-
- `}
-                  >
+                  <div className={`flex `}>
                     <span
                       className={`relative border-l pt-2 text-sm border-black  pl-3`}
                     >
@@ -917,7 +909,7 @@ const Page = ({
                         loadaer && `  absolute rigth-4  -top-2.5 `
                       }  flex justify-between px-2 items-center w-full  `}
                     >
-                      <div className={` text-justify  px-2 items-center`}>
+                      <div className={` text-justify   items-center`}>
                         <p className={`inline`}> جمع به حروف : </p>
                         <p className={` inline`}>
                           {numberToPersianWords(sumPay - sumOff)} ریال

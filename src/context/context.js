@@ -2,7 +2,6 @@ import { createContext } from "react";
 
 export const reducerContext = createContext("reducer");
 
-
 export const typeOfBillsDS = [
   { title: "پیش فاکتور", id: 1 },
   { title: "فاکتور فروش", id: 2 },
@@ -24,5 +23,15 @@ export const consumerDS = [
     nationalID: 14002438448,
     economic: 411399958955,
     addCode: 6816991451,
+  },
+  {
+    title: " تامین اجتماعی",
+    addres:
+      "لرستان - خرم آباد گلدشت شرقی - انتهای بلوار کریم خوان زند میدان پرستار - بیمارستان 256 تخت خواب تامین اجتماعی خرم آباد  ",
+    id: 14013528778,
+    tell: "09163667240",
+    nationalID: 14000261665,
+    economic: 411111575635,
+    addCode: 6819789691,
   },
 ];
