@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import Logo from "../assets/svg/LOGO.svg";
 import { reducerContext, typeOFSellDS } from "../context/context";
 import { numberToPersianWords, sp } from "../Functions/Fonctions";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import { FaCheck } from "react-icons/fa";
 
 const Page = ({
@@ -23,7 +23,7 @@ const Page = ({
   let sumNum = 0;
   let sumPay = 0;
   let sumOff = 0;
-
+const employee = JSON.parse(sessionStorage.getItem("bill"));
   products?.map((i) => {
     sumNum = Number(i?.number) + Number(sumNum);
     sumOff = Number(i?.off) + Number(sumOff);
@@ -43,8 +43,7 @@ const Page = ({
   const reducer = useContext(reducerContext);
   const [reduce, dispach] = reducer;
 
-  console.log(page1, page2);
-
+ 
   return (
     <>
       <div
@@ -390,8 +389,7 @@ const Page = ({
                   <div
                     className={`w-full absolute bottom-0 py-1 pr-2 border-t border-black`}
                   >
-                    کاربر سیستم : {reduce?.User?.name} {time?.day}{" "}
-                    <span> </span>
+                    کاربر سیستم : {employee?.name} {time?.day} <span> </span>
                     {time?.time}
                   </div>
                 </div>
@@ -874,7 +872,7 @@ const Page = ({
                           loadaer && `  absolute rigth-4  -top-2.5 `
                         }`}
                       >
-                        کاربر سیستم : {reduce?.User?.name} {time?.day}{" "}
+                        کاربر سیستم : {employee?.name} {time?.day}{" "}
                         <span> </span>
                         {time?.time}
                       </p>

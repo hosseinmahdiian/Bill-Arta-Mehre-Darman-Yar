@@ -5,6 +5,7 @@ import logo from "../assets/svg/LOGO.svg";
 import { ChengHandler } from "../Functions/Fonctions";
 import toast from "react-hot-toast";
 import { reducerContext } from "../context/context";
+import { stringify } from "postcss";
 
 const users = [
   { name: "اشکان حسنوند", userName: "09216919291", password: "00100", id: 1 },
@@ -21,7 +22,7 @@ const Acconut = () => {
 
   const reducer = useContext(reducerContext);
   const [reduce, dispach] = reducer;
-let notif = false;
+  let notif = false;
 
   return (
     <div className="  h-full bg-white  relative ont-IrSans mt-16 max-w-[380px] mx-auto">
@@ -88,11 +89,11 @@ let notif = false;
                   i.userName == role.userName &&
                   i.password == role.password
                 ) {
-                  dispach({ type: "User", payload: i });
+                  sessionStorage.setItem("bill", JSON.stringify(i));
                   dispach({ type: "Login" });
                   navigate("/bill");
-                  notif=!notif
-                } 
+                  notif = !notif;
+                }
               });
               !notif
                 ? toast.error("رمز یا پسورد اشتباه است")

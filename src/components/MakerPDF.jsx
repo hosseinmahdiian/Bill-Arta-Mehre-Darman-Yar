@@ -35,13 +35,15 @@ const MakerPDF = () => {
   const reducer = useContext(reducerContext);
   const [reduce, dispach] = reducer;
 
-  const [loadaer, setLoader] = useState(false);
+  const [loader, setLoader] = useState(false);
 
-  // useEffect(() => {
-  //   if (!reduce.Login) {
-  //     navigate("/");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (loader) {
+      document.documentElement.classList.add(`overflow-y-hidden`);
+    } else {
+      document.documentElement.classList.remove(`overflow-y-hidden`);
+    }
+  }, [loader==true]);
 
   const [dataConsumer, setDataConsumer] = useState();
   const [consumer, setConsumer] = useState(false);
@@ -77,7 +79,6 @@ const MakerPDF = () => {
 
   const handelPDF1 = async () => {
     setLoader((i) => !i);
-
     const input1 = ref1.current;
     try {
       const canvas1 = await html2canvas(input1);
@@ -142,13 +143,21 @@ const MakerPDF = () => {
     !sell && setSell((i) => !i);
   }, [billDate?.dateOver]);
 
+  useEffect(() => {
+    const employee = JSON.parse(sessionStorage.getItem("bill"));
+    if (!employee) {
+      navigate("/");
+      console.log(employee);
+      
+    }
+  }, []);
   return (
     <>
       {/* modal ============================================================== */}
       <div>
         <div
           className={`${
-            !loadaer ? `hidden` : `fixed`
+            !loader ? `hidden` : `fixed`
           }   bg-black top-0 h-screen w-full bg-opacity-30  right-0 z-20 `}
         >
           <div className=" rounded-xl w-80 h-80 bg-white !bg-opacity-100 top-1/4 right-0 left-0 fixed z-40 mx-auto ">
@@ -301,8 +310,8 @@ const MakerPDF = () => {
                     consumer ? `absolute` : `hidden`
                   } absolute top-14 border w-36 right-0 rounded-xl bg-white child-hover:bg-slate-200 child:py-1 z-20 `}
                 >
-                  {consumerDS?.map((i) => (
-                    <h2 key={i.id} onClick={() => setDataConsumer(i)}>
+                  {consumerDS?.map((i, index) => (
+                    <h2 key={index} onClick={() => setDataConsumer(i)}>
                       {i.title}
                     </h2>
                   ))}
@@ -329,8 +338,8 @@ const MakerPDF = () => {
                     typeOfBill ? `absolute` : `hidden`
                   } absolute top-14 border w-36 right-0 rounded-xl bg-white child-hover:bg-slate-200 child:py-1 z-20 `}
                 >
-                  {typeOfBillsDS?.map((i) => (
-                    <h2 key={i.id} onClick={() => setTypeOfBills(i)}>
+                  {typeOfBillsDS?.map((i, index) => (
+                    <h2 key={index} onClick={() => setTypeOfBills(i)}>
                       {i.title}
                     </h2>
                   ))}
