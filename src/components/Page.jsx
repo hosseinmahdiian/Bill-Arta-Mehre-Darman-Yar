@@ -529,7 +529,7 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
               </div>
 
               <div className={`text-sm `}>
-                <p className={`${loadaer ? `-m-2  pb-2.5` : `mb-2`}`}>
+                <p className={`${loadaer ? `-my-2  pb-2.5` : `mb-2`}`}>
                   شناسه ملی :
                   <span className={``}>{dataConsumer?.nationalID}</span>
                 </p>
@@ -538,7 +538,7 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
                 </p>
               </div>
               <div className={`text-sm `}>
-                <p className={`${loadaer ? `-m-2  pb-2.5` : `mb-2`}`}>
+                <p className={`${loadaer ? `-my-2  pb-2.5` : `mb-2`}`}>
                   کدپستی :<span className={``}>{dataConsumer?.addCode}</span>
                 </p>
                 <p>
