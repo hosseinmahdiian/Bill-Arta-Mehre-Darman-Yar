@@ -43,7 +43,7 @@ const MakerPDF = () => {
     } else {
       document.documentElement.classList.remove(`overflow-y-hidden`);
     }
-  }, [loader==true]);
+  }, [loader == true]);
 
   const [dataConsumer, setDataConsumer] = useState();
   const [consumer, setConsumer] = useState(false);
@@ -87,9 +87,9 @@ const MakerPDF = () => {
         orientation: "landscape",
         unit: "px",
         format: "a4",
-        compress: true,
+        compress: false,
       });
-
+      
       const width1 = PDF.internal.pageSize.getWidth();
       const heigth1 = (canvas1.height * width1) / canvas1.width;
 
@@ -111,7 +111,7 @@ const MakerPDF = () => {
         orientation: "landscape",
         unit: "px",
         format: "a4",
-        compress: true,
+        compress: false,
       });
 
       const canvas1 = await html2canvas(input1);
@@ -148,7 +148,6 @@ const MakerPDF = () => {
     if (!employee) {
       navigate("/");
       console.log(employee);
-      
     }
   }, []);
   return (
