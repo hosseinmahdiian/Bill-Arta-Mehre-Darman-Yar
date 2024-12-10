@@ -19,6 +19,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { BarLoader } from "react-spinners";
 import Page from "./Page";
+import { use } from "react";
 
 const MakerPDF = () => {
   const newUuid = uuid();
@@ -68,43 +69,45 @@ const MakerPDF = () => {
     unit: "",
   });
   const [products, setProducts] = useState([]);
+  // let refs = [{ ref: useRef() }];
 
   const ref1 = useRef();
+  // console.log(ref1);
+
   const ref2 = useRef();
-  const diabalBTN =
+  const disabalBTN =
     !!product?.discription &&
     !!product?.number &&
     !!product?.unit &&
     !!product?.pay;
 
+  // console.log(Math.ceil(11 / 10 - 1));
+  const [refs, setRefs] = useState([]);
+
+  useEffect(() => {
+    const requiredRefsCount = Math.ceil(products.length / 10);
+    setRefs((prevRefs) => {
+      if (requiredRefsCount > prevRefs.length) {
+        // اضافه کردن ارجاعات جدید
+        return [
+          ...prevRefs,
+          ...Array.from(
+            { length: requiredRefsCount - prevRefs.length },
+            () => ({ ref: React.createRef() })
+          ),
+        ];
+      } else if (requiredRefsCount < prevRefs.length) {
+        // حذف ارجاعات اضافی
+        return prevRefs.slice(0, requiredRefsCount);
+      }
+      return prevRefs;
+    });
+  }, [products]);
+
+  // console.log(refs.length);
+
   const handelPDF1 = async () => {
-    setLoader((i) => !i);
-    const input1 = ref1.current;
-    try {
-      const canvas1 = await html2canvas(input1);
-      const imageData1 = canvas1.toDataURL("image/png");
-      const PDF = new jsPDF({
-        orientation: "landscape",
-        unit: "px",
-        format: "a4",
-        compress: false,
-      });
-      
-      const width1 = PDF.internal.pageSize.getWidth();
-      const heigth1 = (canvas1.height * width1) / canvas1.width;
-
-      PDF.addImage(imageData1, "PNG", 0, 0, width1, heigth1);
-      PDF.save(`${billNO}.pdf`);
-    } catch (error) {
-      console.log(error);
-    }
-    setLoader((i) => !i);
-  };
-
-  const handelPDF2 = async () => {
-    setLoader((i) => !i);
-    const input1 = ref1.current;
-    const input2 = ref2.current;
+    // const input1 = refs[0].ref.current;
 
     try {
       const PDF = new jsPDF({
@@ -113,26 +116,25 @@ const MakerPDF = () => {
         format: "a4",
         compress: false,
       });
+      refs.map(async (ref, index) => {
+        // console.log(refs[index].ref.current);
+        0 == index && setLoader((i) => true);
 
-      const canvas1 = await html2canvas(input1);
-      const imageData1 = canvas1.toDataURL("image/png");
-      const width1 = PDF.internal.pageSize.getWidth();
-      const heigth1 = (canvas1.height * width1) / canvas1.width;
-      PDF.addImage(imageData1, "PNG", 0, 0, width1, heigth1);
+        const canvas1 = await html2canvas(refs[index].ref.current);
+        const imageData1 = canvas1.toDataURL("image/png");
 
-      PDF.addPage();
+        const width1 = PDF.internal.pageSize.getWidth();
+        const heigth1 = (canvas1.height * width1) / canvas1.width;
 
-      const canvas2 = await html2canvas(input2);
-      const imageData2 = canvas2.toDataURL("image/png");
-      const width2 = PDF.internal.pageSize.getWidth();
-      const heigth2 = (canvas2.height * width2) / canvas2.width;
-      PDF.addImage(imageData2, "PNG", 0, 0, width2, heigth2);
+        PDF.addImage(imageData1, "PNG", 0, 0, width1, heigth1);
 
-      PDF.save(`${billNO}.pdf`);
+        refs.length - 1 != index && PDF.addPage();
+        refs.length - 1 == index && PDF.save(`${billNO}.pdf`);
+        refs.length - 1 == index && setLoader((i) => false);
+      });
     } catch (error) {
       console.log(error);
     }
-    setLoader((i) => !i);
   };
 
   useEffect(() => {
@@ -150,6 +152,7 @@ const MakerPDF = () => {
       console.log(employee);
     }
   }, []);
+
   return (
     <>
       {/* modal ============================================================== */}
@@ -390,9 +393,9 @@ const MakerPDF = () => {
             </div>
             <div
               className="border w-40 cursor-pointer border-black px-4 pt-0.5 rounded-[10px]"
-              onClick={() =>
-                products?.length > 10 ? handelPDF2() : handelPDF1()
-              }
+              onClick={() => {
+                products.length > 0 && handelPDF1();
+              }}
             >
               خروجی PDF
             </div>
@@ -572,7 +575,7 @@ const MakerPDF = () => {
             </div>
           </div>
           <button
-            disabled={!diabalBTN}
+            disabled={!disabalBTN}
             className={`w-40   h-9   block pb-1.5  rounded-[10px] cursor-pointer ${
               !!product?.discription &&
               !!product?.number &&
@@ -600,40 +603,29 @@ const MakerPDF = () => {
         </div>
       </div>
       {/* =================================================================================================================================================== */}
-      {products.length > 10 ? (
-        <>
-          <Page
-            useRef={ref1}
-            billNO={billNO}
-            CreationDate={date?.CreationDate}
-            typeOfBills={typeOfBills}
-            dataConsumer={dataConsumer}
-            products={products}
-            billDate={billDate}
-            typeOFSell={typeOFSell}
-            text={text}
-            setProducts={setProducts}
-            numberToPersianWords={numberToPersianWords}
-            page1={1}
-          />
-          <Page
-            useRef={ref2}
-            billNO={billNO}
-            CreationDate={date?.CreationDate}
-            typeOfBills={typeOfBills}
-            dataConsumer={dataConsumer}
-            products={products}
-            billDate={billDate}
-            typeOFSell={typeOFSell}
-            text={text}
-            setProducts={setProducts}
-            numberToPersianWords={numberToPersianWords}
-            page2={2}
-          />
-        </>
-      ) : (
+      {products.map(
+        (product, index) =>
+          index % 10 == 0 && (
+            <Page
+              key={index}
+              useRef={refs}
+              billNO={billNO}
+              CreationDate={date?.CreationDate}
+              typeOfBills={typeOfBills}
+              dataConsumer={dataConsumer}
+              products={products}
+              billDate={billDate}
+              typeOFSell={typeOFSell}
+              text={text}
+              setProducts={setProducts}
+              numberToPersianWords={numberToPersianWords}
+              page={index / 10 + 1}
+            />
+          )
+      )}
+      {products.length == 0 && (
         <Page
-          useRef={ref1}
+          useRef={refs}
           billNO={billNO}
           CreationDate={date?.CreationDate}
           typeOfBills={typeOfBills}
@@ -644,6 +636,7 @@ const MakerPDF = () => {
           text={text}
           setProducts={setProducts}
           numberToPersianWords={numberToPersianWords}
+          page={0}
         />
       )}
     </>

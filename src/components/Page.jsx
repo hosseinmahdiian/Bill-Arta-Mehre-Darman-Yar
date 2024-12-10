@@ -17,7 +17,7 @@ const Page = ({
   text,
   setProducts,
   useRef,
-  page1,
+  page,
   page2,
 }) => {
   let sumNum = 0;
@@ -38,6 +38,7 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
       minute: `2-digit`,
     }),
   };
+// console.log(useRef[page - 1].ref, page - 1);
 
   const navigate = useNavigate();
   const reducer = useContext(reducerContext);
@@ -59,8 +60,8 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
             <div>
               تاریخ صدور :<span className={` pr-2`}>{CreationDate}</span>
             </div>
-            <div>{!page2 != 2 && (page1 ? `صفحه 2 از 1` : ` صفحه 1 از 1`)}</div>
-            <div>{page2 == 2 && `صفحه 2 از 2`}</div>{" "}
+            <div>{` صفحه ${page} از ${Math.ceil(products.length / 10)} `}</div>
+            {/* <div>{page2 == 2 && `صفحه 2 از 2`}</div>{" "} */}
           </div>
           <div className={` absolute right-0 left-0 mx-auto w-fit `}>
             <h1 className={`mx-auto w-fit font-bold mb-3 `}>
@@ -72,7 +73,6 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
         </div>
 
         {/* header ==================================================================================================== */}
-
         <div>
           <div
             className={`border border-black rounded-2xl overflow-hidden relative h-16 mt-2`}
@@ -219,7 +219,8 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
               {!!products?.length > 0 ? (
                 products.map(
                   (i, index) =>
-                    (page2 == 2 ? index >= 10 : index < 10) && (
+                    (page - 1) * 10 < index + 1 &&
+                    index + 1 <= page * 10 && (
                       <div
                         className={` ${
                           index % 2 != 0 ? `bg-[#f2f2f2]` : ``
@@ -242,16 +243,16 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
                           <div
                             className={` w-6   text-center text-nowrap text-sm border-l  py-1.2 border-black`}
                           ></div>
-                          <div
+                          <p
                             className={` w-36  text-center text-nowrap text-sm border-l  py-1.5 border-black`}
                           >
                             {i?.IRC}
-                          </div>
-                          <div
+                          </p>
+                          <p
                             className={` w-96 text-center text-nowrap text-sm border-l  py-1.5 border-black`}
                           >
                             {i?.discription}
-                          </div>
+                          </p>
                           <div
                             className={` w-28 text-center text-nowrap text-sm border-l  py-1.5 border-black`}
                           >
@@ -308,7 +309,7 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
         </div>
 
         {/* fotter =========================================================================================================== */}
-        {!page1 && (
+        {page == Math.ceil(products.length / 10) && (
           <div>
             <div className={` border border-black rounded-[10px] mt-2`}>
               <div className={`  `}>
@@ -420,7 +421,7 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
       </div>
       {/* ****************************************************************************************************************------------------------ */}
       <div
-        ref={useRef}
+        ref={useRef[page - 1]?.ref}
         className={`border-t my-5 max-w-7xl  min-w-[80rem] mx-auto px-5 absolute right-[10000px]
             ${loadaer && `!pb-3`}  
         `}
@@ -437,8 +438,7 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
             <div>
               تاریخ صدور :<span className={` pr-2`}>{CreationDate}</span>
             </div>
-            <div>{!page2 != 2 && (page1 ? `صفحه 2 از 1` : ` صفحه 1 از 1`)}</div>
-            <div>{page2 == 2 && `صفحه 2 از 2`}</div>{" "}
+            <div>{` صفحه ${page} از ${Math.ceil(products.length / 10)} `}</div>
           </div>
           <div className={` absolute right-0 left-0 mx-auto w-fit `}>
             <h1 className={`mx-auto w-fit font-bold mb-3 `}>
@@ -638,7 +638,8 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
               {!!products?.length > 0 ? (
                 products.map(
                   (i, index) =>
-                    (page2 == 2 ? index >= 10 : index < 10) && (
+                    (page - 1) * 10 < index + 1 &&
+                    index + 1 <= page * 10 && (
                       <div
                         className={` ${
                           index % 2 != 0 ? `bg-[#f2f2f2]` : ``
@@ -671,11 +672,11 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
                           >
                             {i?.IRC}
                           </div>
-                          <div
+                          <p
                             className={` w-96 text-center text-nowrap text-sm border-l  py-1.5 border-black`}
                           >
                             {i?.discription}
-                          </div>
+                          </p>
                           <div
                             className={` w-28 text-center text-nowrap text-sm border-l  py-1.5 border-black`}
                           >
@@ -738,7 +739,7 @@ const employee = JSON.parse(sessionStorage.getItem("bill"));
         </div>
 
         {/* fotter =========================================================================================================== */}
-        {!page1 && (
+        {page == Math.ceil(products.length / 10) && (
           <div>
             <div className={` border border-black rounded-[10px] mt-2`}>
               <div className={`  `}>
