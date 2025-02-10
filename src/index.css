@@ -68,7 +68,28 @@
   -ms-overflow-style: none;
 }
 
-*{
+* {
   line-height: initial !important;
 }
 
+ @font-face {
+    font-family: "IRANSansFaNum";
+    src: url("../src/assets/fonts/IranSans/IRANSansFaNum.ttf"), format("woff2");
+    font-display: swap;
+  }
+
+body {
+  font-family: "IRANSansFaNum";
+  direction: rtl;
+  unicode-bidi: bidi-override;
+}
+
+input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}

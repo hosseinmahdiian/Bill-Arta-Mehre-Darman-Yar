@@ -20,31 +20,33 @@ import { useNavigate } from "react-router-dom";
 import { BarLoader } from "react-spinners";
 import Page from "./Page";
 import { use } from "react";
+import { useReactToPrint } from "react-to-print";
+import toast from "react-hot-toast";
 
 const MakerPDF = () => {
   const newUuid = uuid();
-  const datTime = new Date();
-  let time = {
-    day: datTime.toLocaleDateString("fa-Ir"),
-    time: datTime.toLocaleTimeString("en-GB", {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-  };
+  // const datTime = new Date();
+  // let time = {
+  //   day: datTime.toLocaleDateString("fa-Ir"),
+  //   time: datTime.toLocaleTimeString("en-GB", {
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //   }),
+  // };
   const navigate = useNavigate();
 
-  const reducer = useContext(reducerContext);
-  const [reduce, dispach] = reducer;
+  // const reducer = useContext(reducerContext);
+  // const [reduce, dispach] = reducer;
 
-  const [loader, setLoader] = useState(false);
+  // const [loader, setLoader] = useState(false);
 
-  useEffect(() => {
-    if (loader) {
-      document.documentElement.classList.add(`overflow-y-hidden`);
-    } else {
-      document.documentElement.classList.remove(`overflow-y-hidden`);
-    }
-  }, [loader == true]);
+  // useEffect(() => {
+  //   if (loader) {
+  //     document.documentElement.classList.add(`overflow-y-hidden`);
+  //   } else {
+  //     document.documentElement.classList.remove(`overflow-y-hidden`);
+  //   }
+  // }, [loader == true]);
 
   const [dataConsumer, setDataConsumer] = useState();
   const [consumer, setConsumer] = useState(false);
@@ -71,10 +73,10 @@ const MakerPDF = () => {
   const [products, setProducts] = useState([]);
   // let refs = [{ ref: useRef() }];
 
-  const ref1 = useRef();
+  // const ref1 = useRef();
   // console.log(ref1);
 
-  const ref2 = useRef();
+  // const ref2 = useRef();
   const disabalBTN =
     !!product?.discription &&
     !!product?.number &&
@@ -82,60 +84,27 @@ const MakerPDF = () => {
     !!product?.pay;
 
   // console.log(Math.ceil(11 / 10 - 1));
-  const [refs, setRefs] = useState([]);
+  // const [refs, setRefs] = useState([]);
 
-  useEffect(() => {
-    const requiredRefsCount = Math.ceil(products.length / 10);
-    setRefs((prevRefs) => {
-      if (requiredRefsCount > prevRefs.length) {
-        // اضافه کردن ارجاعات جدید
-        return [
-          ...prevRefs,
-          ...Array.from(
-            { length: requiredRefsCount - prevRefs.length },
-            () => ({ ref: React.createRef() })
-          ),
-        ];
-      } else if (requiredRefsCount < prevRefs.length) {
-        // حذف ارجاعات اضافی
-        return prevRefs.slice(0, requiredRefsCount);
-      }
-      return prevRefs;
-    });
-  }, [products]);
-
-  // console.log(refs.length);
-
-  const handelPDF1 = async () => {
-    // const input1 = refs[0].ref.current;
-
-    try {
-      const PDF = new jsPDF({
-        orientation: "landscape",
-        unit: "px",
-        format: "a4",
-        compress: false,
-      });
-      refs.map(async (ref, index) => {
-        // console.log(refs[index].ref.current);
-        0 == index && setLoader((i) => true);
-
-        const canvas1 = await html2canvas(refs[index].ref.current);
-        const imageData1 = canvas1.toDataURL("image/png");
-
-        const width1 = PDF.internal.pageSize.getWidth();
-        const heigth1 = (canvas1.height * width1) / canvas1.width;
-
-        PDF.addImage(imageData1, "PNG", 0, 0, width1, heigth1);
-
-        refs.length - 1 != index && PDF.addPage();
-        refs.length - 1 == index && PDF.save(`${billNO}.pdf`);
-        refs.length - 1 == index && setLoader((i) => false);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // useEffect(() => {
+  //   const requiredRefsCount = Math.ceil(products.length / 10);
+  //   setRefs((prevRefs) => {
+  //     if (requiredRefsCount > prevRefs.length) {
+  //       // اضافه کردن ارجاعات جدید
+  //       return [
+  //         ...prevRefs,
+  //         ...Array.from(
+  //           { length: requiredRefsCount - prevRefs.length },
+  //           () => ({ ref: React.createRef() })
+  //         ),
+  //       ];
+  //     } else if (requiredRefsCount < prevRefs.length) {
+  //       // حذف ارجاعات اضافی
+  //       return prevRefs.slice(0, requiredRefsCount);
+  //     }
+  //     return prevRefs;
+  //   });
+  // }, [products]);
 
   useEffect(() => {
     !calendar && setCalendar((i) => !i);
@@ -153,13 +122,23 @@ const MakerPDF = () => {
     }
   }, []);
 
+  const contentRef = useRef(null);
+  const reactToPrintFn = useReactToPrint({
+    contentRef,
+    documentTitle: billNO,
+    // fonts: {
+    //   family: "IRANSansFaNum",
+    //   source: "../assets/fonts/IranSans/IRANSansFaNum.ttf",
+    // },
+  });
+
   return (
     <>
       {/* modal ============================================================== */}
       <div>
         <div
           className={`${
-            !loader ? `hidden` : `fixed`
+            !false ? `hidden` : `fixed`
           }   bg-black top-0 h-screen w-full bg-opacity-30  right-0 z-20 `}
         >
           <div className=" rounded-xl w-80 h-80 bg-white !bg-opacity-100 top-1/4 right-0 left-0 fixed z-40 mx-auto ">
@@ -287,118 +266,117 @@ const MakerPDF = () => {
         </div>
       </div>
       {/* tools  ====================================================================== */}
-      <div className=" max-w-7xl  min-w-[80rem]  mx-auto">
-        <div className=" w-full     ">
-          <div className="flex  justify-between  mx-auto  mt-4 text-center">
-            <div className="flex gap-2  child:w-36 child:border child:border-black child:px-4 child:h-8 child:pt-0.5 child:rounded-[10px] ">
+      <div className=" max-w-7xl  min-w-[80rem]  mx-auto ">
+        <div className="flex w-full justify-between  mx-auto  mt-4 text-center">
+          <div className="flex gap-2  child:w-36 child:border child:border-black child:px-4 child:h-8 child:pt-0.5 child:rounded-[10px] ">
+            <div
+              className="relative flex items-center justify-center gap-2 pb-2 "
+              onClick={() => setConsumer((i) => !i)}
+            >
+              {!!dataConsumer ? (
+                <h1 className="text-nowrap text-sm mt-1 ">
+                  {dataConsumer.title}
+                </h1>
+              ) : (
+                <h2>خریدار</h2>
+              )}
+              {!consumer ? (
+                <IoIosArrowDown className="mt-1.5" />
+              ) : (
+                <IoIosArrowUp className="mt-1.5" />
+              )}
               <div
-                className="relative flex items-center justify-center gap-2 pb-2 "
-                onClick={() => setConsumer((i) => !i)}
+                className={` ${
+                  consumer ? `absolute` : `hidden`
+                } absolute top-14 border w-36 right-0 rounded-xl bg-white child-hover:bg-slate-200 child:py-1 z-20 `}
               >
-                {!!dataConsumer ? (
-                  <h1 className="text-nowrap text-sm mt-1 ">
-                    {dataConsumer.title}
-                  </h1>
-                ) : (
-                  <h2>خریدار</h2>
-                )}
-                {!consumer ? (
-                  <IoIosArrowDown className="mt-1.5" />
-                ) : (
-                  <IoIosArrowUp className="mt-1.5" />
-                )}
-                <div
-                  className={` ${
-                    consumer ? `absolute` : `hidden`
-                  } absolute top-14 border w-36 right-0 rounded-xl bg-white child-hover:bg-slate-200 child:py-1 z-20 `}
-                >
-                  {consumerDS?.map((i, index) => (
-                    <h2 key={index} onClick={() => setDataConsumer(i)}>
-                      {i.title}
-                    </h2>
-                  ))}
-                </div>
-              </div>
-              <div
-                className="relative flex items-center justify-center gap-2 pb-2 "
-                onClick={() => setTypeOfBill((i) => !i)}
-              >
-                {!!typeOfBills ? (
-                  <h1 className="text-nowrap text-sm mt-1 ">
-                    {typeOfBills.title}
-                  </h1>
-                ) : (
-                  <h2>نوع فاکتور</h2>
-                )}
-                {!typeOfBill ? (
-                  <IoIosArrowDown className="mt-1.5" />
-                ) : (
-                  <IoIosArrowUp className="mt-1.5" />
-                )}
-                <div
-                  className={` ${
-                    typeOfBill ? `absolute` : `hidden`
-                  } absolute top-14 border w-36 right-0 rounded-xl bg-white child-hover:bg-slate-200 child:py-1 z-20 `}
-                >
-                  {typeOfBillsDS?.map((i, index) => (
-                    <h2 key={index} onClick={() => setTypeOfBills(i)}>
-                      {i.title}
-                    </h2>
-                  ))}
-                </div>
-              </div>
-              <div className=" relative !pt-0 ">
-                <input
-                  className="peer  h-5  rounded-[10px] outline-none   w-full mt-2  "
-                  placeholder=" "
-                  id="BillNO"
-                  name="BillNO"
-                  onChange={(e) => setBillNO(e.target.value)}
-                />
-                <label
-                  htmlFor="BillNO"
-                  className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
-                    !!billNO ? `start-2.5 -top-2 !text-[12px]` : `top-0.5`
-                  }`}
-                >
-                  شماره فاکتور
-                </label>
-              </div>
-              <div
-                onClick={() => setCalendar((i) => !i)}
-                className="flex gap-2 pb-2 items-center justify-center "
-              >
-                <IoIosCalendar />
-                {!!date?.CreationDate ? (
-                  <h1 className="text-nowrap text-sm mt-1 ">
-                    {date?.CreationDate}
-                  </h1>
-                ) : (
-                  <h2> تاریخ</h2>
-                )}
-              </div>
-              <div className="" onClick={() => setSell((i) => !i)}>
-                {!!typeOFSell?.title ? (
-                  <h1 className="text-nowrap text-sm mt-1 ">
-                    {typeOFSell.title}
-                  </h1>
-                ) : (
-                  <h2>نحوه فروش</h2>
-                )}
-              </div>
-
-              <div className="" onClick={() => setDiscription((i) => !i)}>
-                توضیحات
+                {consumerDS?.map((i, index) => (
+                  <h2 key={index} onClick={() => setDataConsumer(i)}>
+                    {i.title}
+                  </h2>
+                ))}
               </div>
             </div>
             <div
-              className="border w-40 cursor-pointer border-black px-4 pt-0.5 rounded-[10px]"
-              onClick={() => {
-                products.length > 0 && handelPDF1();
-              }}
+              className="relative flex items-center justify-center gap-2 pb-2 "
+              onClick={() => setTypeOfBill((i) => !i)}
             >
-              خروجی PDF
+              {!!typeOfBills ? (
+                <h1 className="text-nowrap text-sm mt-1 ">
+                  {typeOfBills.title}
+                </h1>
+              ) : (
+                <h2>نوع فاکتور</h2>
+              )}
+              {!typeOfBill ? (
+                <IoIosArrowDown className="mt-1.5" />
+              ) : (
+                <IoIosArrowUp className="mt-1.5" />
+              )}
+              <div
+                className={` ${
+                  typeOfBill ? `absolute` : `hidden`
+                } absolute top-14 border w-36 right-0 rounded-xl bg-white child-hover:bg-slate-200 child:py-1 z-20 `}
+              >
+                {typeOfBillsDS?.map((i, index) => (
+                  <h2 key={index} onClick={() => setTypeOfBills(i)}>
+                    {i.title}
+                  </h2>
+                ))}
+              </div>
             </div>
+            <div className=" relative !pt-0 ">
+              <input
+                className="peer  h-5  rounded-[10px] outline-none   w-full mt-2  "
+                placeholder=" "
+                id="BillNO"
+                name="BillNO"
+                onChange={(e) => setBillNO(e.target.value)}
+              />
+              <label
+                htmlFor="BillNO"
+                className={`absolute start-1     rounded-2xl transition-all ease-linear peer-focus:start-2.5 peer-focus:-top-2 peer-focus:text-sm bg-white px-2 ${
+                  !!billNO ? `start-2.5 -top-2 !text-[12px]` : `top-0.5`
+                }`}
+              >
+                شماره فاکتور
+              </label>
+            </div>
+            <div
+              onClick={() => setCalendar((i) => !i)}
+              className="flex gap-2 pb-2 items-center justify-center "
+            >
+              <IoIosCalendar />
+              {!!date?.CreationDate ? (
+                <h1 className="text-nowrap text-sm mt-1 ">
+                  {date?.CreationDate}
+                </h1>
+              ) : (
+                <h2> تاریخ</h2>
+              )}
+            </div>
+            <div className="" onClick={() => setSell((i) => !i)}>
+              {!!typeOFSell?.title ? (
+                <h1 className="text-nowrap text-sm mt-1 ">
+                  {typeOFSell.title}
+                </h1>
+              ) : (
+                <h2>نحوه فروش</h2>
+              )}
+            </div>
+
+            <div className="" onClick={() => setDiscription((i) => !i)}>
+              توضیحات
+            </div>
+          </div>
+          <div
+            className="border w-40 cursor-pointer border-black px-4 pt-0.5 rounded-[10px]"
+            onClick={() => {
+              products.length > 0 && reactToPrintFn();
+              products.length == 0 && toast.error("سطری وارد نکردید");
+            }}
+          >
+            خروجی PDF
           </div>
         </div>
         {/* ======================================================= */}
@@ -477,6 +455,7 @@ const MakerPDF = () => {
                   value={!!product?.number ? product?.number : ""}
                   id="number"
                   name="number"
+                  type="number"
                   onChange={(e) =>
                     setProduct((data) => ({ ...data, number: e.target.value }))
                   }
@@ -519,6 +498,7 @@ const MakerPDF = () => {
                   value={!!product?.pay ? product?.pay : ""}
                   id="pay"
                   name="pay"
+                  type="number"
                   onChange={(e) =>
                     setProduct((data) => ({ ...data, pay: e.target.value }))
                   }
@@ -539,6 +519,7 @@ const MakerPDF = () => {
                   value={!!product?.off ? product?.off : ""}
                   id="off"
                   name="off"
+                  type="number"
                   onChange={(e) =>
                     setProduct((data) => ({ ...data, off: e.target.value }))
                   }
@@ -603,42 +584,48 @@ const MakerPDF = () => {
         </div>
       </div>
       {/* =================================================================================================================================================== */}
-      {products.map(
-        (product, index) =>
-          index % 10 == 0 && (
-            <Page
-              key={index}
-              useRef={refs}
-              billNO={billNO}
-              CreationDate={date?.CreationDate}
-              typeOfBills={typeOfBills}
-              dataConsumer={dataConsumer}
-              products={products}
-              billDate={billDate}
-              typeOFSell={typeOFSell}
-              text={text}
-              setProducts={setProducts}
-              numberToPersianWords={numberToPersianWords}
-              page={index / 10 + 1}
-            />
-          )
-      )}
-      {products.length == 0 && (
-        <Page
-          useRef={refs}
-          billNO={billNO}
-          CreationDate={date?.CreationDate}
-          typeOfBills={typeOfBills}
-          dataConsumer={dataConsumer}
-          products={products}
-          billDate={billDate}
-          typeOFSell={typeOFSell}
-          text={text}
-          setProducts={setProducts}
-          numberToPersianWords={numberToPersianWords}
-          page={0}
-        />
-      )}
+
+      <div>
+        {console.log(products)}
+        <div ref={contentRef}>
+          {products.map(
+            (product, index) =>
+              index % 10 == 0 && (
+                <Page
+                  key={index}
+                  // useRef={refs}
+                  billNO={billNO}
+                  CreationDate={date?.CreationDate}
+                  typeOfBills={typeOfBills}
+                  dataConsumer={dataConsumer}
+                  products={products}
+                  billDate={billDate}
+                  typeOFSell={typeOFSell}
+                  text={text}
+                  setProducts={setProducts}
+                  numberToPersianWords={numberToPersianWords}
+                  page={index / 10 + 1}
+                />
+              )
+          )}
+        </div>
+        {products.length == 0 && (
+          <Page
+            // useRef={refs}
+            billNO={billNO}
+            CreationDate={date?.CreationDate}
+            typeOfBills={typeOfBills}
+            dataConsumer={dataConsumer}
+            products={products}
+            billDate={billDate}
+            typeOFSell={typeOFSell}
+            text={text}
+            setProducts={setProducts}
+            numberToPersianWords={numberToPersianWords}
+            page={0}
+          />
+        )}
+      </div>
     </>
   );
 };
