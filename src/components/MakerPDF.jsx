@@ -274,7 +274,7 @@ const MakerPDF = () => {
               onClick={() => setConsumer((i) => !i)}
             >
               {!!dataConsumer ? (
-                <h1 className="text-nowrap text-sm mt-1 ">
+                <h1 className="text-nowrap text-sm mt-1 line-clamp-2">
                   {dataConsumer.title}
                 </h1>
               ) : (
