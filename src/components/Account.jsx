@@ -11,6 +11,7 @@ const users = [
   { name: "اشکان حسنوند", userName: "09216919291", password: "00100", id: 1 },
   { name: "اعظم خدائی", userName: "4071822813", password: "Azam4060", id: 2 },
   { name: "علی معتمدی", userName: "093052550916", password: "Ali0916", id: 3 },
+  { name: "Admin", userName: "Admin", password: "Admin", id: 4 },
 ];
 
 const Acconut = () => {
