@@ -7,12 +7,9 @@ import toast from "react-hot-toast";
 import { reducerContext } from "../context/context";
 import { stringify } from "postcss";
 
-const users = [
-  { name: "اشکان حسنوند", userName: "09216919291", password: "00100", id: 1 },
-  { name: "اعظم خدائی", userName: "4071822813", password: "Azam4060", id: 2 },
-  { name: "علی معتمدی", userName: "093052550916", password: "Ali0916", id: 3 },
-  { name: "Admin", userName: "Admin", password: "Admin", id: 4 },
-];
+const users = JSON.parse(import.meta.env.VITE_USERS || "[]");
+
+console.log(users);
 
 const Acconut = () => {
   const navigate = useNavigate();
@@ -23,8 +20,23 @@ const Acconut = () => {
 
   const reducer = useContext(reducerContext);
   const [reduce, dispach] = reducer;
-  let notif = false;
 
+  const handleLogin = () => {
+    let notif = false;
+    if (!!role.userName && !!role.password) {
+      users.forEach((i) => {
+        if (i.userName === role.userName && i.password === role.password) {
+          sessionStorage.setItem("bill", JSON.stringify(i));
+          dispach({ type: "Login" });
+          navigate("/bill");
+          notif = true;
+        }
+      });
+      notif
+        ? toast.success("خوش آمدید")
+        : toast.error("رمز یا پسورد اشتباه است");
+    }
+  };
   return (
     <div className="  h-full bg-white  relative ont-IrSans mt-16 max-w-[380px] mx-auto">
       <div className={` block`}>
@@ -32,7 +44,12 @@ const Acconut = () => {
           <img src={logo} alt="" className="mx-auto mb-20 w-56 mt-40 " />
         </NavLink>
 
-        <div className=" ">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault(); // جلوگیری از رفرش صفحه
+            handleLogin();
+          }}
+        >
           <div className="relative  mx-[20px] ">
             <input
               className="peer px-5 border rounded-[10px] outline-gray-300 h-12 w-full  "
@@ -57,7 +74,7 @@ const Acconut = () => {
               placeholder=" "
               id="password"
               name="password"
-              type={eye ? "Password" : "text"}
+              type={eye ? "password" : "text"}
               onChange={(e) => ChengHandler(e, setRole)}
             />
             <label
@@ -79,31 +96,16 @@ const Acconut = () => {
           </div>
 
           <button
+            type="submit"
             className={` ${
               !(!!role.userName && !!role.password)
                 ? ` bg-gray-200 text-gray-600`
                 : ` bg-blue-500 text-white`
             } w-[calc(100%-40px)] mx-auto h-12  block mt-10 rounded-[10px] pb-2   `}
-            onClick={() => {
-              users.map((i) => {
-                if (
-                  i.userName == role.userName &&
-                  i.password == role.password
-                ) {
-                  sessionStorage.setItem("bill", JSON.stringify(i));
-                  dispach({ type: "Login" });
-                  navigate("/bill");
-                  notif = !notif;
-                }
-              });
-              !notif
-                ? toast.error("رمز یا پسورد اشتباه است")
-                : toast.success(`خوش آمدید`);
-            }}
           >
             ورود
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
